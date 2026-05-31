@@ -18,11 +18,19 @@ export default function MessageComposer() {
     }
   }, [input]);
 
+  // Refocus textarea after streaming completes so the user can keep typing
+  useEffect(() => {
+    if (!isStreaming && apiKey) {
+      textareaRef.current?.focus();
+    }
+  }, [isStreaming, apiKey]);
+
   const handleSend = () => {
     const trimmed = input.trim();
     if (!trimmed || isStreaming || !apiKey) return;
     setInput('');
     sendMessage(trimmed, apiKey, getSystemPrompt());
+    textareaRef.current?.focus();
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
