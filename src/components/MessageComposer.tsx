@@ -7,9 +7,19 @@ export default function MessageComposer() {
   const [input, setInput] = useState('');
   const sendMessage = useChatStore((s) => s.sendMessage);
   const isStreaming = useChatStore((s) => s.isStreaming);
+  const editingMessageId = useChatStore((s) => s.editingMessageId);
+  const editingContent = useChatStore((s) => s.editingContent);
+  const cancelEditing = useChatStore((s) => s.cancelEditing);
   const getSystemPrompt = useCharacterStore((s) => s.getSystemPrompt);
   const apiKey = useApiKeyStore((s) => s.apiKey);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Pre-fill input when editing a previous message
+  useEffect(() => {
+    if (editingContent !== null) {
+      setInput(editingContent);
+    }
+  }, [editingMessageId, editingContent]);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -33,6 +43,12 @@ export default function MessageComposer() {
     textareaRef.current?.focus();
   };
 
+  const handleCancelEdit = () => {
+    setInput('');
+    cancelEditing();
+    textareaRef.current?.focus();
+  };
+
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -52,6 +68,13 @@ export default function MessageComposer() {
 
   return (
     <div className="p-4 border-t border-slate-800 bg-slate-900">
+      {editingMessageId && (
+        <div className="max-w-4xl mx-auto mb-2 flex items-center gap-2">
+          <span className="text-xs text-amber-400/80 italic">
+            Editing a previous message — responses below this point will be replaced.
+          </span>
+        </div>
+      )}
       <div className="flex gap-2 items-end max-w-4xl mx-auto">
         <textarea
           ref={textareaRef}
@@ -63,6 +86,15 @@ export default function MessageComposer() {
           rows={1}
           className="input-field resize-none flex-1"
         />
+        {editingMessageId && (
+          <button
+            onClick={handleCancelEdit}
+            disabled={isStreaming}
+            className="btn-secondary shrink-0 text-sm"
+          >
+            Cancel
+          </button>
+        )}
         <button
           onClick={handleSend}
           disabled={isStreaming || !input.trim()}

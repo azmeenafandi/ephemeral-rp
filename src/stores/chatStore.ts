@@ -11,11 +11,15 @@ interface ChatState {
   isStreaming: boolean;
   streamingContent: string;
   error: string | null;
+  editingMessageId: string | null;
+  editingContent: string | null;
   sendMessage: (content: string, apiKey: string, systemPrompt: string) => Promise<void>;
   clearChat: () => void;
   startNewChat: (greeting?: string) => void;
   importMessages: (messages: Message[]) => void;
   getExportData: (character: Character) => SessionExport;
+  startEditing: (messageId: string) => void;
+  cancelEditing: () => void;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -23,6 +27,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
   isStreaming: false,
   streamingContent: '',
   error: null,
+  editingMessageId: null,
+  editingContent: null,
 
   startNewChat: (greeting) => {
     if (greeting) {
@@ -39,6 +45,17 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   sendMessage: async (content, apiKey, systemPrompt) => {
+    const { editingMessageId } = get();
+
+    // If editing a previous message, truncate everything from that point
+    let baseMessages = get().messages;
+    if (editingMessageId) {
+      const editIndex = baseMessages.findIndex((m) => m.id === editingMessageId);
+      if (editIndex !== -1) {
+        baseMessages = baseMessages.slice(0, editIndex);
+      }
+    }
+
     const userMessage: Message = {
       id: uuidv4(),
       role: 'user',
@@ -48,7 +65,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     const allMessages: Message[] = [
       { id: uuidv4(), role: 'system' as const, content: systemPrompt, timestamp: Date.now() },
-      ...get().messages,
+      ...baseMessages,
       userMessage,
     ];
 
@@ -57,10 +74,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const messages = trimmed.map((m) => ({ role: m.role, content: m.content }));
 
     set((state) => ({
-      messages: [...state.messages, userMessage],
+      messages: [...baseMessages, userMessage],
       isStreaming: true,
       streamingContent: '',
       error: null,
+      editingMessageId: null,
+      editingContent: null,
     }));
 
     // Abort stuck requests after 2 minutes (connection stalled, DeepSeek timeout, etc.)
@@ -138,6 +157,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   clearChat: () => set({ messages: [], error: null }),
+
+  startEditing: (messageId) => {
+    const msg = get().messages.find((m) => m.id === messageId);
+    if (!msg || msg.role !== 'user') return;
+    set({ editingMessageId: messageId, editingContent: msg.content });
+  },
+
+  cancelEditing: () => set({ editingMessageId: null, editingContent: null }),
 
   importMessages: (messages) => set({ messages, error: null }),
 
