@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import ChatArea from './components/ChatArea';
 import SettingsModal from './components/SettingsModal';
 import CharacterEditor from './components/CharacterEditor';
+import AboutModal from './components/AboutModal';
 import { useUIStore } from './stores/uiStore';
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
       </div>
       <SettingsModal />
       <CharacterEditor />
+      <AboutModal />
     </div>
   );
 }

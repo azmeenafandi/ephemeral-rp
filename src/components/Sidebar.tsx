@@ -16,6 +16,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
   const importMessages = useChatStore((s) => s.importMessages);
   const selectCharacter = useCharacterStore((s) => s.selectCharacter);
   const openCharacterEditor = useUIStore((s) => s.openCharacterEditor);
+  const openAbout = useUIStore((s) => s.openAbout);
 
   const handleExport = () => {
     if (!selectedCharacter) return;
@@ -71,6 +72,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
           📤 Import Session
           <input type="file" accept=".json" onChange={handleImport} className="hidden" />
         </label>
+
+        <button onClick={openAbout} className="btn-secondary w-full text-sm">
+          ℹ️ About
+        </button>
       </div>
     </aside>
   );
