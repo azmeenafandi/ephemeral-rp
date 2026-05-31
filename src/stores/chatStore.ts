@@ -63,11 +63,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
       error: null,
     }));
 
+    // Abort stuck requests after 2 minutes (connection stalled, DeepSeek timeout, etc.)
+    const STREAM_TIMEOUT_MS = 120_000;
+
     try {
       const response = await fetch(`${API_BASE_URL}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ apiKey, messages }),
+        signal: AbortSignal.timeout(STREAM_TIMEOUT_MS),
       });
 
       if (!response.ok) {
@@ -119,10 +123,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
         streamingContent: '',
       }));
     } catch (err) {
+      const message =
+        err instanceof DOMException && err.name === 'AbortError'
+          ? 'Request timed out — the AI took too long to respond. Please try again.'
+          : err instanceof Error
+            ? err.message
+            : 'An error occurred';
       set({
         isStreaming: false,
         streamingContent: '',
-        error: err instanceof Error ? err.message : 'An error occurred',
+        error: message,
       });
     }
   },
