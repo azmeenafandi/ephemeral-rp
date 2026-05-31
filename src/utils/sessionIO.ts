@@ -15,9 +15,15 @@ export function exportSession(data: SessionExport): void {
   URL.revokeObjectURL(url);
 }
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+
 export async function importSession(
   file: File,
 ): Promise<{ character: Character; messages: Message[] }> {
+  if (file.size > MAX_FILE_SIZE) {
+    throw new Error('File too large — maximum size is 5 MB');
+  }
+
   const text = await file.text();
   let data: unknown;
 

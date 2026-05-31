@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeSanitize from 'rehype-sanitize';
 import { useChatStore } from '../stores/chatStore';
 import StreamingMessage from './StreamingMessage';
 
@@ -34,7 +35,7 @@ export default function MessageList() {
               }`}
             >
               <div className="prose prose-sm prose-invert max-w-none text-sm leading-relaxed">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize]}>
                   {msg.content}
                 </ReactMarkdown>
               </div>
