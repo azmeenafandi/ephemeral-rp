@@ -1,0 +1,1605 @@
+{
+  "version": "1.0.0",
+  "gitCommitHash": "not-a-git-repo",
+  "generatedAt": "2026-05-31T13:46:16.871Z",
+  "files": {
+    ".understand-anything/.understandignore": {
+      "filePath": ".understand-anything/.understandignore",
+      "contentHash": "06950c20104726d8f85d495d0153f9ae674ffd1f7d0ae1ac3c29bca68b808e88",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 23,
+      "hasStructuralAnalysis": false
+    },
+    "CLOUDFLARE.md": {
+      "filePath": "CLOUDFLARE.md",
+      "contentHash": "3d4ec750d42d06c10f284a10797c0f162df8a3b63c96b8ff1d34ec526eaad5a3",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 297,
+      "hasStructuralAnalysis": true
+    },
+    "eslint.config.js": {
+      "filePath": "eslint.config.js",
+      "contentHash": "cbf8ce523da86184e47dea028b3e7de903d2a20de9058a21272dbb8ed8c9fd7d",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "@eslint/js",
+          "specifiers": [
+            "js"
+          ]
+        },
+        {
+          "source": "@typescript-eslint/eslint-plugin",
+          "specifiers": [
+            "tseslint"
+          ]
+        },
+        {
+          "source": "@typescript-eslint/parser",
+          "specifiers": [
+            "tsparser"
+          ]
+        },
+        {
+          "source": "eslint-plugin-react-hooks",
+          "specifiers": [
+            "reactHooks"
+          ]
+        },
+        {
+          "source": "eslint-plugin-react-refresh",
+          "specifiers": [
+            "reactRefresh"
+          ]
+        },
+        {
+          "source": "eslint-config-prettier",
+          "specifiers": [
+            "prettier"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 30,
+      "hasStructuralAnalysis": true
+    },
+    "index.html": {
+      "filePath": "index.html",
+      "contentHash": "d075b9b72fac3ce51d604e8d2ab5c2ff26b40f573e22abd481cff465ae418e12",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 17,
+      "hasStructuralAnalysis": false
+    },
+    "package.json": {
+      "filePath": "package.json",
+      "contentHash": "ec7a4bcba6f3988efbea9fc663de4f1134c65af0fb84e7f79f3305703bffd442",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 52,
+      "hasStructuralAnalysis": true
+    },
+    "postcss.config.js": {
+      "filePath": "postcss.config.js",
+      "contentHash": "4cae941be9bc3bee9a6905e47ea7a51aee216d587d34a8cc4ae48f78fd6d8159",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 6,
+      "hasStructuralAnalysis": true
+    },
+    "README.md": {
+      "filePath": "README.md",
+      "contentHash": "403602d65266569adf9c98ffc45ec7654a011c34f9c40e88a78eff913953e22a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 100,
+      "hasStructuralAnalysis": true
+    },
+    "SPEC.md": {
+      "filePath": "SPEC.md",
+      "contentHash": "749cb21abe1e8c621145241189ba10f13fb56ed205d010796e5c2f3f0c448ced",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 438,
+      "hasStructuralAnalysis": true
+    },
+    "src/App.tsx": {
+      "filePath": "src/App.tsx",
+      "contentHash": "1416535d1bfb00caa3a2c3ffbbc69e46d59585724b366ad3558b4620b65f143b",
+      "functions": [
+        {
+          "name": "App",
+          "params": [],
+          "exported": true,
+          "lineCount": 15
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useState"
+          ]
+        },
+        {
+          "source": "./components/Header",
+          "specifiers": [
+            "Header"
+          ]
+        },
+        {
+          "source": "./components/Sidebar",
+          "specifiers": [
+            "Sidebar"
+          ]
+        },
+        {
+          "source": "./components/ChatArea",
+          "specifiers": [
+            "ChatArea"
+          ]
+        },
+        {
+          "source": "./components/SettingsModal",
+          "specifiers": [
+            "SettingsModal"
+          ]
+        },
+        {
+          "source": "./components/CharacterEditor",
+          "specifiers": [
+            "CharacterEditor"
+          ]
+        },
+        {
+          "source": "./stores/uiStore",
+          "specifiers": [
+            "useUIStore"
+          ]
+        }
+      ],
+      "exports": [
+        "App"
+      ],
+      "totalLines": 24,
+      "hasStructuralAnalysis": true
+    },
+    "src/characters/builtIn.ts": {
+      "filePath": "src/characters/builtIn.ts",
+      "contentHash": "13efd6a4559da51bc31c0b28661dbf1dfcd0052713bc72079404e2377c1bf126",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "../types/character",
+          "specifiers": [
+            "Character"
+          ]
+        }
+      ],
+      "exports": [
+        "builtInCharacters"
+      ],
+      "totalLines": 136,
+      "hasStructuralAnalysis": true
+    },
+    "src/components/__tests__/EmptyState.test.tsx": {
+      "filePath": "src/components/__tests__/EmptyState.test.tsx",
+      "contentHash": "0f5951112d510e507ea5caf45592f29ed0e9f198708398eb7ddc77f53257424b",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest",
+          "specifiers": [
+            "describe",
+            "it",
+            "expect"
+          ]
+        },
+        {
+          "source": "@testing-library/react",
+          "specifiers": [
+            "render",
+            "screen"
+          ]
+        },
+        {
+          "source": "../EmptyState",
+          "specifiers": [
+            "EmptyState"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 19,
+      "hasStructuralAnalysis": true
+    },
+    "src/components/__tests__/Header.test.tsx": {
+      "filePath": "src/components/__tests__/Header.test.tsx",
+      "contentHash": "7e23039f57538bc19a8bb809e510b7a33a75891ca8d298472854eed52cf83559",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest",
+          "specifiers": [
+            "describe",
+            "it",
+            "expect"
+          ]
+        },
+        {
+          "source": "@testing-library/react",
+          "specifiers": [
+            "render",
+            "screen"
+          ]
+        },
+        {
+          "source": "../Header",
+          "specifiers": [
+            "Header"
+          ]
+        },
+        {
+          "source": "../../stores/apiKeyStore",
+          "specifiers": [
+            "useApiKeyStore"
+          ]
+        },
+        {
+          "source": "../../stores/uiStore",
+          "specifiers": [
+            "useUIStore"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 40,
+      "hasStructuralAnalysis": true
+    },
+    "src/components/CharacterEditor.tsx": {
+      "filePath": "src/components/CharacterEditor.tsx",
+      "contentHash": "640ee9368736322547c5a6797907d91e1ec2f939ed79a445d8bd9034dd5d84b4",
+      "functions": [
+        {
+          "name": "buildSystemPrompt",
+          "params": [
+            "char"
+          ],
+          "returnType": "string",
+          "exported": false,
+          "lineCount": 10
+        },
+        {
+          "name": "CharacterEditor",
+          "params": [],
+          "exported": true,
+          "lineCount": 105
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useState",
+            "useEffect"
+          ]
+        },
+        {
+          "source": "../stores/characterStore",
+          "specifiers": [
+            "useCharacterStore"
+          ]
+        },
+        {
+          "source": "../stores/uiStore",
+          "specifiers": [
+            "useUIStore"
+          ]
+        },
+        {
+          "source": "../types/character",
+          "specifiers": [
+            "Character"
+          ]
+        }
+      ],
+      "exports": [
+        "CharacterEditor"
+      ],
+      "totalLines": 131,
+      "hasStructuralAnalysis": true
+    },
+    "src/components/CharacterSelector.tsx": {
+      "filePath": "src/components/CharacterSelector.tsx",
+      "contentHash": "37057d6e602d93fea7def976917b5e64a91d15c9562ea9a4a80248ac90f752b5",
+      "functions": [
+        {
+          "name": "CharacterSelector",
+          "params": [],
+          "exported": true,
+          "lineCount": 49
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "../stores/characterStore",
+          "specifiers": [
+            "useCharacterStore"
+          ]
+        },
+        {
+          "source": "../stores/chatStore",
+          "specifiers": [
+            "useChatStore"
+          ]
+        },
+        {
+          "source": "../stores/uiStore",
+          "specifiers": [
+            "useUIStore"
+          ]
+        }
+      ],
+      "exports": [
+        "CharacterSelector"
+      ],
+      "totalLines": 54,
+      "hasStructuralAnalysis": true
+    },
+    "src/components/ChatArea.tsx": {
+      "filePath": "src/components/ChatArea.tsx",
+      "contentHash": "41e068e512fa782e79a3108c0cdeda654829f732a1f646d679ad45349b1c8175",
+      "functions": [
+        {
+          "name": "ChatArea",
+          "params": [],
+          "exported": true,
+          "lineCount": 23
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "./MessageList",
+          "specifiers": [
+            "MessageList"
+          ]
+        },
+        {
+          "source": "./MessageComposer",
+          "specifiers": [
+            "MessageComposer"
+          ]
+        },
+        {
+          "source": "./EmptyState",
+          "specifiers": [
+            "EmptyState"
+          ]
+        },
+        {
+          "source": "../stores/chatStore",
+          "specifiers": [
+            "useChatStore"
+          ]
+        }
+      ],
+      "exports": [
+        "ChatArea"
+      ],
+      "totalLines": 29,
+      "hasStructuralAnalysis": true
+    },
+    "src/components/EmptyState.tsx": {
+      "filePath": "src/components/EmptyState.tsx",
+      "contentHash": "2d88a0f41c121bdce73947cc510cb7fd754d286d98afd3d0b0584af09149d3fe",
+      "functions": [
+        {
+          "name": "EmptyState",
+          "params": [],
+          "exported": true,
+          "lineCount": 28
+        }
+      ],
+      "classes": [],
+      "imports": [],
+      "exports": [
+        "EmptyState"
+      ],
+      "totalLines": 29,
+      "hasStructuralAnalysis": true
+    },
+    "src/components/Header.tsx": {
+      "filePath": "src/components/Header.tsx",
+      "contentHash": "c7a093af9e362d7437786a9b234bd2c25a1dcb83d3ef1c249e2a2d723297b910",
+      "functions": [
+        {
+          "name": "Header",
+          "params": [
+            "{ onToggleSidebar }"
+          ],
+          "exported": true,
+          "lineCount": 35
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "../stores/apiKeyStore",
+          "specifiers": [
+            "useApiKeyStore"
+          ]
+        },
+        {
+          "source": "../stores/uiStore",
+          "specifiers": [
+            "useUIStore"
+          ]
+        }
+      ],
+      "exports": [
+        "Header"
+      ],
+      "totalLines": 43,
+      "hasStructuralAnalysis": true
+    },
+    "src/components/MessageComposer.tsx": {
+      "filePath": "src/components/MessageComposer.tsx",
+      "contentHash": "7449cbea67fea376140ae6d6f1a967fd59fec55fe0489eb5a347521c74cd6d3f",
+      "functions": [
+        {
+          "name": "MessageComposer",
+          "params": [],
+          "exported": true,
+          "lineCount": 73
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useState",
+            "useRef",
+            "useEffect",
+            "KeyboardEvent"
+          ]
+        },
+        {
+          "source": "../stores/chatStore",
+          "specifiers": [
+            "useChatStore"
+          ]
+        },
+        {
+          "source": "../stores/characterStore",
+          "specifiers": [
+            "useCharacterStore"
+          ]
+        },
+        {
+          "source": "../stores/apiKeyStore",
+          "specifiers": [
+            "useApiKeyStore"
+          ]
+        }
+      ],
+      "exports": [
+        "MessageComposer"
+      ],
+      "totalLines": 79,
+      "hasStructuralAnalysis": true
+    },
+    "src/components/MessageList.tsx": {
+      "filePath": "src/components/MessageList.tsx",
+      "contentHash": "956b84c105b329fee7c7f9e84af01b91dfcae77bd6546d3c73a9349d1ac6fb53",
+      "functions": [
+        {
+          "name": "MessageList",
+          "params": [],
+          "exported": true,
+          "lineCount": 43
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useRef",
+            "useEffect"
+          ]
+        },
+        {
+          "source": "react-markdown",
+          "specifiers": [
+            "ReactMarkdown"
+          ]
+        },
+        {
+          "source": "remark-gfm",
+          "specifiers": [
+            "remarkGfm"
+          ]
+        },
+        {
+          "source": "../stores/chatStore",
+          "specifiers": [
+            "useChatStore"
+          ]
+        },
+        {
+          "source": "./StreamingMessage",
+          "specifiers": [
+            "StreamingMessage"
+          ]
+        }
+      ],
+      "exports": [
+        "MessageList"
+      ],
+      "totalLines": 50,
+      "hasStructuralAnalysis": true
+    },
+    "src/components/SettingsModal.tsx": {
+      "filePath": "src/components/SettingsModal.tsx",
+      "contentHash": "2702c7feeb8d9d1df110ed3ec7a496075eb9097740aeee33850dad9b10161cb4",
+      "functions": [
+        {
+          "name": "SettingsModal",
+          "params": [],
+          "exported": true,
+          "lineCount": 104
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useState"
+          ]
+        },
+        {
+          "source": "../stores/apiKeyStore",
+          "specifiers": [
+            "useApiKeyStore"
+          ]
+        },
+        {
+          "source": "../stores/uiStore",
+          "specifiers": [
+            "useUIStore"
+          ]
+        }
+      ],
+      "exports": [
+        "SettingsModal"
+      ],
+      "totalLines": 109,
+      "hasStructuralAnalysis": true
+    },
+    "src/components/Sidebar.tsx": {
+      "filePath": "src/components/Sidebar.tsx",
+      "contentHash": "3e4b1a42965875534121c503a5e4613cd6a0e54bf86dc37179af7731d166c650",
+      "functions": [
+        {
+          "name": "Sidebar",
+          "params": [
+            "{ isOpen }"
+          ],
+          "exported": true,
+          "lineCount": 67
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "../stores/characterStore",
+          "specifiers": [
+            "useCharacterStore"
+          ]
+        },
+        {
+          "source": "../stores/chatStore",
+          "specifiers": [
+            "useChatStore"
+          ]
+        },
+        {
+          "source": "../stores/uiStore",
+          "specifiers": [
+            "useUIStore"
+          ]
+        },
+        {
+          "source": "./CharacterSelector",
+          "specifiers": [
+            "CharacterSelector"
+          ]
+        },
+        {
+          "source": "../utils/sessionIO",
+          "specifiers": [
+            "exportSession",
+            "importSession"
+          ]
+        }
+      ],
+      "exports": [
+        "Sidebar"
+      ],
+      "totalLines": 78,
+      "hasStructuralAnalysis": true
+    },
+    "src/components/StreamingMessage.tsx": {
+      "filePath": "src/components/StreamingMessage.tsx",
+      "contentHash": "61b96ac8c84923cc76aef1498962e5a53d1f10b0d912dfc90cd9dcb47aa15fb9",
+      "functions": [
+        {
+          "name": "StreamingMessage",
+          "params": [
+            "{ content }"
+          ],
+          "exported": true,
+          "lineCount": 14
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react-markdown",
+          "specifiers": [
+            "ReactMarkdown"
+          ]
+        },
+        {
+          "source": "remark-gfm",
+          "specifiers": [
+            "remarkGfm"
+          ]
+        }
+      ],
+      "exports": [
+        "StreamingMessage"
+      ],
+      "totalLines": 18,
+      "hasStructuralAnalysis": true
+    },
+    "src/config.ts": {
+      "filePath": "src/config.ts",
+      "contentHash": "26598e85ba9de5fcd6023e745858f40b91b2f6f495cbe544040754b95c6edb80",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [
+        "API_BASE_URL"
+      ],
+      "totalLines": 2,
+      "hasStructuralAnalysis": true
+    },
+    "src/index.css": {
+      "filePath": "src/index.css",
+      "contentHash": "20f01cab6b462aa3b802668ad70246859c0a11ff00482ddfa73a3969bbed3cd5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 97,
+      "hasStructuralAnalysis": false
+    },
+    "src/main.tsx": {
+      "filePath": "src/main.tsx",
+      "contentHash": "85a2cdedf2c9899103739aabe9576c7e52eda0c0fff19cbc4679d424e573cd68",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "React"
+          ]
+        },
+        {
+          "source": "react-dom/client",
+          "specifiers": [
+            "ReactDOM"
+          ]
+        },
+        {
+          "source": "./App.tsx",
+          "specifiers": [
+            "App"
+          ]
+        },
+        {
+          "source": "./index.css",
+          "specifiers": []
+        }
+      ],
+      "exports": [],
+      "totalLines": 11,
+      "hasStructuralAnalysis": true
+    },
+    "src/stores/__tests__/apiKeyStore.test.ts": {
+      "filePath": "src/stores/__tests__/apiKeyStore.test.ts",
+      "contentHash": "14c8f087609416b4b8d7f874dbd88f2fbc7c2c1f2e18534f8917ceb84d812e68",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest",
+          "specifiers": [
+            "describe",
+            "it",
+            "expect",
+            "beforeEach"
+          ]
+        },
+        {
+          "source": "../apiKeyStore",
+          "specifiers": [
+            "useApiKeyStore"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 32,
+      "hasStructuralAnalysis": true
+    },
+    "src/stores/__tests__/characterStore.test.ts": {
+      "filePath": "src/stores/__tests__/characterStore.test.ts",
+      "contentHash": "15f391d9b764470759055c0752035b7663128317dfcba543ad039aba26c19aea",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest",
+          "specifiers": [
+            "describe",
+            "it",
+            "expect",
+            "beforeEach"
+          ]
+        },
+        {
+          "source": "../characterStore",
+          "specifiers": [
+            "useCharacterStore"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 106,
+      "hasStructuralAnalysis": true
+    },
+    "src/stores/__tests__/chatStore.test.ts": {
+      "filePath": "src/stores/__tests__/chatStore.test.ts",
+      "contentHash": "ffb970b476ec85da610893cb2bd3beb43f43aafefe3416dc3cba78ae1d512ab6",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest",
+          "specifiers": [
+            "describe",
+            "it",
+            "expect",
+            "beforeEach"
+          ]
+        },
+        {
+          "source": "../chatStore",
+          "specifiers": [
+            "useChatStore"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 57,
+      "hasStructuralAnalysis": true
+    },
+    "src/stores/__tests__/uiStore.test.ts": {
+      "filePath": "src/stores/__tests__/uiStore.test.ts",
+      "contentHash": "250d209f113c4e996daf99d7e05385171a7d346d199eda18c5656f373062cd45",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest",
+          "specifiers": [
+            "describe",
+            "it",
+            "expect",
+            "beforeEach"
+          ]
+        },
+        {
+          "source": "../uiStore",
+          "specifiers": [
+            "useUIStore"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 51,
+      "hasStructuralAnalysis": true
+    },
+    "src/stores/apiKeyStore.ts": {
+      "filePath": "src/stores/apiKeyStore.ts",
+      "contentHash": "8ba8dae380c435418a4c640982f2fcb7d3e603dd8bbf852ecb13887b67234dc5",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "zustand",
+          "specifiers": [
+            "create"
+          ]
+        }
+      ],
+      "exports": [
+        "useApiKeyStore"
+      ],
+      "totalLines": 16,
+      "hasStructuralAnalysis": true
+    },
+    "src/stores/characterStore.ts": {
+      "filePath": "src/stores/characterStore.ts",
+      "contentHash": "be17dc32a6432b38c8cd0b2dbac1e52efd0a72d088569ca15c78cdb1bc4386a9",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "zustand",
+          "specifiers": [
+            "create"
+          ]
+        },
+        {
+          "source": "../types/character",
+          "specifiers": [
+            "Character"
+          ]
+        },
+        {
+          "source": "../characters/builtIn",
+          "specifiers": [
+            "builtInCharacters"
+          ]
+        },
+        {
+          "source": "../utils/uuid",
+          "specifiers": [
+            "uuidv4"
+          ]
+        }
+      ],
+      "exports": [
+        "useCharacterStore"
+      ],
+      "totalLines": 71,
+      "hasStructuralAnalysis": true
+    },
+    "src/stores/chatStore.ts": {
+      "filePath": "src/stores/chatStore.ts",
+      "contentHash": "f87b7a1cdaaa4f2a42c2bcaaf71af9a69ee4a6f12118eedd92a58a926e5cd271",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "zustand",
+          "specifiers": [
+            "create"
+          ]
+        },
+        {
+          "source": "../types/message",
+          "specifiers": [
+            "Message"
+          ]
+        },
+        {
+          "source": "../types/session",
+          "specifiers": [
+            "SessionExport"
+          ]
+        },
+        {
+          "source": "../types/character",
+          "specifiers": [
+            "Character"
+          ]
+        },
+        {
+          "source": "../utils/uuid",
+          "specifiers": [
+            "uuidv4"
+          ]
+        },
+        {
+          "source": "../utils/contextManager",
+          "specifiers": [
+            "trimMessages"
+          ]
+        },
+        {
+          "source": "../config",
+          "specifiers": [
+            "API_BASE_URL"
+          ]
+        }
+      ],
+      "exports": [
+        "useChatStore"
+      ],
+      "totalLines": 141,
+      "hasStructuralAnalysis": true
+    },
+    "src/stores/uiStore.ts": {
+      "filePath": "src/stores/uiStore.ts",
+      "contentHash": "732ab59f655e9912e80bf76fdcbdda509221ff312bfec4cb73fea40757d59418",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "zustand",
+          "specifiers": [
+            "create"
+          ]
+        }
+      ],
+      "exports": [
+        "useUIStore"
+      ],
+      "totalLines": 28,
+      "hasStructuralAnalysis": true
+    },
+    "src/test-setup.ts": {
+      "filePath": "src/test-setup.ts",
+      "contentHash": "a46d66851af2c056e805fdd574bf5ec3adb1181c43c5e41f0a1c592e338afe64",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "@testing-library/jest-dom",
+          "specifiers": []
+        }
+      ],
+      "exports": [],
+      "totalLines": 2,
+      "hasStructuralAnalysis": true
+    },
+    "src/types/character.ts": {
+      "filePath": "src/types/character.ts",
+      "contentHash": "0285afc6a0d1d757e1d251be722ba80ed7dcfcb4c1374494abff40f2338834f9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 11,
+      "hasStructuralAnalysis": true
+    },
+    "src/types/message.ts": {
+      "filePath": "src/types/message.ts",
+      "contentHash": "d73932a606377cb0c6ea1bf2d13e4d3e36b54b649194cd34d2970c00875bc29b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 7,
+      "hasStructuralAnalysis": true
+    },
+    "src/types/session.ts": {
+      "filePath": "src/types/session.ts",
+      "contentHash": "276e77b02654ede60188a5d5b7002edfef10300c209c8cea737059ab3b2a798b",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "./character",
+          "specifiers": [
+            "Character"
+          ]
+        },
+        {
+          "source": "./message",
+          "specifiers": [
+            "Message"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 10,
+      "hasStructuralAnalysis": true
+    },
+    "src/utils/__tests__/contextManager.test.ts": {
+      "filePath": "src/utils/__tests__/contextManager.test.ts",
+      "contentHash": "351884e6229e4772c1d259d665f7b4e48c6b9b94cd68a8b68c2903c8e651ffa2",
+      "functions": [
+        {
+          "name": "makeMessages",
+          "params": [
+            "count"
+          ],
+          "returnType": "Message[]",
+          "exported": false,
+          "lineCount": 9
+        },
+        {
+          "name": "makeLargeMessage",
+          "params": [
+            "size"
+          ],
+          "returnType": "Message",
+          "exported": false,
+          "lineCount": 4
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest",
+          "specifiers": [
+            "describe",
+            "it",
+            "expect"
+          ]
+        },
+        {
+          "source": "../contextManager",
+          "specifiers": [
+            "trimMessages",
+            "estimateTokens",
+            "estimateTotalTokens"
+          ]
+        },
+        {
+          "source": "../../types/message",
+          "specifiers": [
+            "Message"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 81,
+      "hasStructuralAnalysis": true
+    },
+    "src/utils/__tests__/promptBuilder.test.ts": {
+      "filePath": "src/utils/__tests__/promptBuilder.test.ts",
+      "contentHash": "194421da9db60031b7f06a5d222e16f70e645bacb3490e6d35ce9a4fe9609c08",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest",
+          "specifiers": [
+            "describe",
+            "it",
+            "expect"
+          ]
+        },
+        {
+          "source": "../promptBuilder",
+          "specifiers": [
+            "buildSystemPrompt",
+            "buildSystemPromptFromParts"
+          ]
+        },
+        {
+          "source": "../../types/character",
+          "specifiers": [
+            "Character"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 43,
+      "hasStructuralAnalysis": true
+    },
+    "src/utils/__tests__/sessionIO.test.ts": {
+      "filePath": "src/utils/__tests__/sessionIO.test.ts",
+      "contentHash": "f877cadb9da45e8d4a8032d456dd445f83ae87c552be707b915d004926e83314",
+      "functions": [
+        {
+          "name": "makeExport",
+          "params": [],
+          "returnType": "SessionExport",
+          "exported": false,
+          "lineCount": 3
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest",
+          "specifiers": [
+            "describe",
+            "it",
+            "expect"
+          ]
+        },
+        {
+          "source": "../sessionIO",
+          "specifiers": [
+            "exportSession",
+            "importSession"
+          ]
+        },
+        {
+          "source": "../../types/session",
+          "specifiers": [
+            "SessionExport"
+          ]
+        },
+        {
+          "source": "../../types/character",
+          "specifiers": [
+            "Character"
+          ]
+        },
+        {
+          "source": "../../types/message",
+          "specifiers": [
+            "Message"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 143,
+      "hasStructuralAnalysis": true
+    },
+    "src/utils/contextManager.ts": {
+      "filePath": "src/utils/contextManager.ts",
+      "contentHash": "ef2d57c69911b8a5d32dc5244e553f5247cdc76184070673175386b25b6f3ffa",
+      "functions": [
+        {
+          "name": "trimMessages",
+          "params": [
+            "messages"
+          ],
+          "returnType": "Message[]",
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "estimateTokens",
+          "params": [
+            "text"
+          ],
+          "returnType": "number",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "estimateTotalTokens",
+          "params": [
+            "messages"
+          ],
+          "returnType": "number",
+          "exported": true,
+          "lineCount": 3
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "../types/message",
+          "specifiers": [
+            "Message"
+          ]
+        }
+      ],
+      "exports": [
+        "trimMessages",
+        "estimateTokens",
+        "estimateTotalTokens"
+      ],
+      "totalLines": 39,
+      "hasStructuralAnalysis": true
+    },
+    "src/utils/promptBuilder.ts": {
+      "filePath": "src/utils/promptBuilder.ts",
+      "contentHash": "3e89fcb7fc5c579a44fea4f0e48c591f9d146d7284be195ea46786d393793f9e",
+      "functions": [
+        {
+          "name": "buildSystemPrompt",
+          "params": [
+            "character"
+          ],
+          "returnType": "string",
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "buildSystemPromptFromParts",
+          "params": [
+            "name",
+            "description",
+            "personality",
+            "scenario"
+          ],
+          "returnType": "string",
+          "exported": true,
+          "lineCount": 16
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "../types/character",
+          "specifiers": [
+            "Character"
+          ]
+        }
+      ],
+      "exports": [
+        "buildSystemPrompt",
+        "buildSystemPromptFromParts"
+      ],
+      "totalLines": 39,
+      "hasStructuralAnalysis": true
+    },
+    "src/utils/sessionIO.ts": {
+      "filePath": "src/utils/sessionIO.ts",
+      "contentHash": "877d5f5a676696ef4eecf5937eb7dcc4575eec1c2add560c26da43cca5d02116",
+      "functions": [
+        {
+          "name": "exportSession",
+          "params": [
+            "data"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "importSession",
+          "params": [
+            "file"
+          ],
+          "returnType": "Promise<{ character: Character; messages: Message[] }>",
+          "exported": true,
+          "lineCount": 59
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "../types/session",
+          "specifiers": [
+            "SessionExport"
+          ]
+        },
+        {
+          "source": "../types/character",
+          "specifiers": [
+            "Character"
+          ]
+        },
+        {
+          "source": "../types/message",
+          "specifiers": [
+            "Message"
+          ]
+        }
+      ],
+      "exports": [
+        "exportSession",
+        "importSession"
+      ],
+      "totalLines": 77,
+      "hasStructuralAnalysis": true
+    },
+    "src/utils/uuid.ts": {
+      "filePath": "src/utils/uuid.ts",
+      "contentHash": "becb38cf977097648d11fdddd06d871ecc15615a92810dcf0e9987e10aa6aad0",
+      "functions": [
+        {
+          "name": "v4",
+          "params": [],
+          "returnType": "string",
+          "exported": true,
+          "lineCount": 7
+        }
+      ],
+      "classes": [],
+      "imports": [],
+      "exports": [
+        "v4"
+      ],
+      "totalLines": 8,
+      "hasStructuralAnalysis": true
+    },
+    "src/vite-env.d.ts": {
+      "filePath": "src/vite-env.d.ts",
+      "contentHash": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 2,
+      "hasStructuralAnalysis": true
+    },
+    "tsconfig.json": {
+      "filePath": "tsconfig.json",
+      "contentHash": "6f7be4b899df1e4012a15c63288b87c04e9e4ac7458b4f912fd4d92007424017",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 28,
+      "hasStructuralAnalysis": true
+    },
+    "tsconfig.node.json": {
+      "filePath": "tsconfig.node.json",
+      "contentHash": "729d2d879c4315e4a48d1b552822be743e930fadfc842c10f5dd74d471860296",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 22,
+      "hasStructuralAnalysis": true
+    },
+    "tsconfig.node.tsbuildinfo": {
+      "filePath": "tsconfig.node.tsbuildinfo",
+      "contentHash": "31c4b12995d4e347423a4a3ac66ceeb7be2fa03f495b7302dd5be2ca2148a94a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": false
+    },
+    "tsconfig.tsbuildinfo": {
+      "filePath": "tsconfig.tsbuildinfo",
+      "contentHash": "cf632814971496c0cbdcd4f11813c6e40c904e940b1134745478ae1450424743",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": false
+    },
+    "vite.config.d.ts": {
+      "filePath": "vite.config.d.ts",
+      "contentHash": "4b96dd19fd2949d28ce80e913412b0026dc421e5bf6c31d87c7b5eb11b5753b4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 3,
+      "hasStructuralAnalysis": true
+    },
+    "vite.config.js": {
+      "filePath": "vite.config.js",
+      "contentHash": "e3d09ce9fee7aac226685560d70135fcb65e2222787ab5ffde3e7d173d99f6d9",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vite",
+          "specifiers": [
+            "defineConfig"
+          ]
+        },
+        {
+          "source": "@vitejs/plugin-react",
+          "specifiers": [
+            "react"
+          ]
+        },
+        {
+          "source": "path",
+          "specifiers": [
+            "path"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 28,
+      "hasStructuralAnalysis": true
+    },
+    "vite.config.ts": {
+      "filePath": "vite.config.ts",
+      "contentHash": "88dda6e4965f8766efed021d3fe51cb86099f37b461ee7bc0325a6c0ac726daf",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vite",
+          "specifiers": [
+            "defineConfig"
+          ]
+        },
+        {
+          "source": "@vitejs/plugin-react",
+          "specifiers": [
+            "react"
+          ]
+        },
+        {
+          "source": "path",
+          "specifiers": [
+            "path"
+          ]
+        },
+        {
+          "source": "@cloudflare/vite-plugin",
+          "specifiers": [
+            "cloudflare"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 30,
+      "hasStructuralAnalysis": true
+    },
+    "vitest.config.ts": {
+      "filePath": "vitest.config.ts",
+      "contentHash": "4c5feffc9f6d07e931d6b9260a872eb6e7c0b9984611db79c7eee68a06ef3894",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest/config",
+          "specifiers": [
+            "defineConfig"
+          ]
+        },
+        {
+          "source": "@vitejs/plugin-react",
+          "specifiers": [
+            "react"
+          ]
+        },
+        {
+          "source": "path",
+          "specifiers": [
+            "path"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 19,
+      "hasStructuralAnalysis": true
+    },
+    "worker/dist-worker.js": {
+      "filePath": "worker/dist-worker.js",
+      "contentHash": "db0584ee82dde634871b5584b25c8dc7162ee435a7d8484b780c59c4a0ae9373",
+      "functions": [
+        {
+          "name": "jsonResponse",
+          "params": [
+            "status",
+            "body",
+            "requestId",
+            "startTime"
+          ],
+          "exported": false,
+          "lineCount": 11
+        }
+      ],
+      "classes": [],
+      "imports": [],
+      "exports": [
+        "default"
+      ],
+      "totalLines": 80,
+      "hasStructuralAnalysis": true
+    },
+    "worker/package.json": {
+      "filePath": "worker/package.json",
+      "contentHash": "ac0c79230715c9175f9422c5bd01c0bf3f2f45bb583c1e27232e0ac962bcfbe5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 17,
+      "hasStructuralAnalysis": true
+    },
+    "worker/src/__tests__/index.test.ts": {
+      "filePath": "worker/src/__tests__/index.test.ts",
+      "contentHash": "bbd883abde84aaee6e3c5e49718bb5ccd3c9ac3a397893460f1b7db76e01948b",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest",
+          "specifiers": [
+            "describe",
+            "it",
+            "expect",
+            "beforeAll"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 91,
+      "hasStructuralAnalysis": true
+    },
+    "worker/src/index.ts": {
+      "filePath": "worker/src/index.ts",
+      "contentHash": "4fb962410361ec96179844ad1b4a1b0996181344baa83e633d5a20013914394b",
+      "functions": [
+        {
+          "name": "jsonResponse",
+          "params": [
+            "status",
+            "body",
+            "requestId",
+            "startTime"
+          ],
+          "returnType": "Response",
+          "exported": false,
+          "lineCount": 12
+        }
+      ],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 100,
+      "hasStructuralAnalysis": true
+    },
+    "worker/tsconfig.json": {
+      "filePath": "worker/tsconfig.json",
+      "contentHash": "697a1195e584b9aa629126873e2705414d966d86d753cbad740a080caf44de48",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 15,
+      "hasStructuralAnalysis": true
+    },
+    "worker/vitest.config.ts": {
+      "filePath": "worker/vitest.config.ts",
+      "contentHash": "b983b2ec05a02d0d54af7e798a0462e69142f7982a5bdf15aedae0f656be48e7",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest/config",
+          "specifiers": [
+            "defineConfig"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 8,
+      "hasStructuralAnalysis": true
+    },
+    "worker/wrangler.toml": {
+      "filePath": "worker/wrangler.toml",
+      "contentHash": "47e83b8d49ffa7cb6e762dbdaee1a17b15fed3120526eb2cc58bca1a9a505bbe",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 7,
+      "hasStructuralAnalysis": true
+    }
+  }
+}

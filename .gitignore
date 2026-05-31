@@ -1,0 +1,11 @@
+node_modules
+dist
+.a5c/runs
+*.log
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
