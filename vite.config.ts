@@ -1,6 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { readFileSync } from 'fs';
+
+const pkg = JSON.parse(readFileSync('./package.json', 'utf-8'));
 
 import { cloudflare } from "@cloudflare/vite-plugin";
 
@@ -26,5 +29,6 @@ export default defineConfig({
   },
   define: {
     'import.meta.env.VITE_API_BASE_URL': JSON.stringify(process.env.VITE_API_BASE_URL),
+    'import.meta.env.VITE_APP_VERSION': JSON.stringify(pkg.version),
   },
 });
