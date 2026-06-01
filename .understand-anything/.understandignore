@@ -1,22 +1,20 @@
 # .understandignore — patterns for files/dirs to exclude from analysis
 # Syntax: same as .gitignore (globs, # comments, ! negation, trailing / for dirs)
-# Lines below are suggestions — uncomment to activate.
-# Use ! prefix to force-include something excluded by defaults.
 #
 # Built-in defaults (always excluded unless negated):
-#   node_modules/, .git/, dist/, build/, obj/, *.lock, *.min.js, etc.
-#
-# --- From .gitignore (uncomment to exclude) ---
+#   node_modules/, .git/, dist/, build/, obj/, *.lock, *.min.js, images, fonts, etc.
 
-# .a5c/runs
-# .wrangler
-# .dev.vars*
-# !.dev.vars.example
-# .env*
-# !.env.example
+# --- This tool's own output (generated, not source) ---
+.understand-anything/
 
-# --- Test file patterns (uncomment to exclude) ---
+# --- Build artifacts (generated, not authored) ---
+tsconfig.node.tsbuildinfo
+tsconfig.tsbuildinfo
+vite.config.d.ts
+vite.config.js
+worker/dist-worker.js
 
-# *.test.*
-# *.spec.*
-# *.snap
+# --- Gitignored files to also skip during analysis ---
+.wrangler/
+.dev.vars*
+.env*
