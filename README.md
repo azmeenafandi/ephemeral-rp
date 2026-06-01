@@ -8,7 +8,7 @@ A privacy-first, browser-based AI roleplay application. Your API key and convers
 Browser (React + Zustand)  →  Cloudflare Worker (stateless relay)  →  DeepSeek API
 ```
 
-- **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS + Zustand
+- **Frontend**: React 19 + TypeScript + Vite + Tailwind CSS + Zustand
 - **Backend**: Cloudflare Worker — pure stateless proxy
 - **Zero persistence**: No D1, KV, R2, Durable Objects, or any database
 - **Privacy**: API key in browser memory only, lost on page refresh
@@ -16,25 +16,24 @@ Browser (React + Zustand)  →  Cloudflare Worker (stateless relay)  →  DeepSe
 ## Quick Start
 
 ```bash
-# Install dependencies
 npm install
-
-# Start dev server (frontend on :5173, worker on :8787)
-npm run dev        # in one terminal
-cd worker && npm run dev  # in another terminal
-
-# Or with worker proxy:
-# The Vite dev server proxies /api → localhost:8787
+npm run dev              # Frontend on :5173
+cd worker && npm run dev # Worker on :8787
 ```
+
+The Vite dev server proxies `/api` → `localhost:8787`.
 
 ## Features
 
 - 🎭 **4 built-in characters**: Fantasy Mage, Cyberpunk Hacker, Space Captain, Noir Detective
 - ✨ **Custom characters**: Create, edit, delete your own personas
-- 💬 **Streaming chat**: Real-time SSE streaming from DeepSeek
+- 💬 **Streaming chat**: Real-time SSE streaming from DeepSeek with 120s timeout
+- ✏️ **Edit messages**: Backtrack to any previous message and branch the conversation
 - 📥 **Export sessions**: Download conversations as JSON files
-- 📤 **Import sessions**: Restore previous conversations
-- 🔒 **Privacy-first**: Nothing stored server-side. No logging of sensitive data.
+- 📤 **Import sessions**: Restore previous conversations (validated, 5 MB cap, sanitized rendering)
+- 🔒 **Privacy-first**: Nothing stored server-side. No logging of sensitive data
+- 🔑 **BYOK**: Bring your own DeepSeek key — never sent anywhere but DeepSeek
+- ℹ️ **About modal**: Privacy education and API key best practices
 - 🌙 **Dark mode**: Always-on dark theme
 - 📱 **Responsive**: Works on desktop and mobile
 
@@ -44,7 +43,7 @@ cd worker && npm run dev  # in another terminal
 |--------|-------------|
 | `npm run dev` | Start Vite dev server |
 | `npm run build` | Type-check + production build |
-| `npm test` | Run all frontend tests (Vitest) |
+| `npm test` | Run all tests (Vitest) |
 | `npm run lint` | ESLint check |
 | `npm run format` | Prettier format |
 | `cd worker && npm run dev` | Start Worker dev server |
@@ -54,46 +53,40 @@ cd worker && npm run dev  # in another terminal
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `VITE_API_BASE_URL` | `/api` | Worker API base URL. Set to deployed Worker URL in production |
+| `VITE_API_BASE_URL` | `/api` | Worker API base URL |
 
-For Cloudflare Pages production builds:
+For production builds pointing to a deployed Worker:
+
 ```bash
 VITE_API_BASE_URL=https://your-worker.workers.dev/api npm run build
 ```
 
 ## Deployment
 
-### Frontend (Cloudflare Pages)
+The app runs as a single Cloudflare Worker serving both the frontend and the API relay. See [`CLOUDFLARE.md`](./CLOUDFLARE.md) for the full guide.
+
 ```bash
 npm run build
-npx wrangler pages deploy dist
+cd worker && npx wrangler deploy
 ```
-
-### Worker (Cloudflare Workers)
-```bash
-cd worker
-npx wrangler deploy
-```
-
-Set the `VITE_API_BASE_URL` env var in Cloudflare Pages to point to your deployed Worker URL.
 
 ## Project Structure
 
 ```
 src/
-├── components/     # React components
+├── components/     # React components (chat, sidebar, modals, editor)
 ├── stores/         # Zustand stores (apiKey, character, chat, UI)
-├── types/          # TypeScript interfaces
-├── utils/          # Prompt builder, context manager, session I/O
+├── types/          # TypeScript interfaces (Character, Message, Session)
+├── utils/          # Prompt builder, context manager, session I/O, UUID
 └── characters/     # Built-in character definitions
 worker/
 ├── src/index.ts    # Cloudflare Worker fetch handler
-└── wrangler.toml    # Zero storage configuration
+└── wrangler.toml   # Zero storage configuration
 ```
 
 ## Testing
 
-- **69 tests total**, 100% passing
+- **60 tests**, 100% passing
 - Frontend: Vitest + React Testing Library + jsdom
 - Worker: Vitest (direct module import)
-- Covers: session I/O validation, prompt building, context trimming, store operations, component rendering, worker validation
+- Covers: session I/O validation, prompt building, context trimming, store operations, component rendering, worker integration
