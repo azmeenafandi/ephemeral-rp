@@ -20,13 +20,23 @@ export default function MessageList() {
   const formatTime = (ts: number) =>
     new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-  // If editing a message, only show messages before the editing point
   const displayedMessages = editingMessageId
     ? (() => {
         const editIndex = messages.findIndex((m) => m.id === editingMessageId);
         return editIndex !== -1 ? messages.slice(0, editIndex) : messages;
       })()
     : messages;
+
+  const bubbleStyle = (role: string, occ?: boolean) => {
+    if (occ) {
+      return role === 'user'
+        ? 'bg-amber-900/30 text-amber-200 border border-amber-800/50'
+        : 'bg-amber-900/20 text-amber-200 border border-amber-800/40';
+    }
+    return role === 'user'
+      ? 'bg-indigo-900/40 text-slate-100 border border-indigo-800/50'
+      : 'bg-slate-800 text-slate-200 border border-slate-700';
+  };
 
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -38,15 +48,7 @@ export default function MessageList() {
             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-[85%] sm:max-w-[80%] rounded-xl px-4 py-3 ${
-                msg.role === 'user'
-                  ? msg.occ
-                    ? 'bg-amber-900/30 text-amber-200 border border-amber-800/50'
-                    : 'bg-indigo-900/40 text-slate-100 border border-indigo-800/50'
-                  : msg.occ
-                    ? 'bg-amber-900/20 text-amber-200 border border-amber-800/40'
-                    : 'bg-slate-800 text-slate-200 border border-slate-700'
-              }`
+              className={`max-w-[85%] sm:max-w-[80%] rounded-xl px-4 py-3 ${bubbleStyle(msg.role, msg.occ)}`}
             >
               <div className="prose prose-sm prose-invert max-w-none text-sm leading-relaxed">
                 <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize]}>
