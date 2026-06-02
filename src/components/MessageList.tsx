@@ -40,9 +40,13 @@ export default function MessageList() {
             <div
               className={`max-w-[85%] sm:max-w-[80%] rounded-xl px-4 py-3 ${
                 msg.role === 'user'
-                  ? 'bg-indigo-900/40 text-slate-100 border border-indigo-800/50'
-                  : 'bg-slate-800 text-slate-200 border border-slate-700'
-              }`}
+                  ? msg.occ
+                    ? 'bg-amber-900/30 text-amber-200 border border-amber-800/50'
+                    : 'bg-indigo-900/40 text-slate-100 border border-indigo-800/50'
+                  : msg.occ
+                    ? 'bg-amber-900/20 text-amber-200 border border-amber-800/40'
+                    : 'bg-slate-800 text-slate-200 border border-slate-700'
+              }`
             >
               <div className="prose prose-sm prose-invert max-w-none text-sm leading-relaxed">
                 <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize]}>

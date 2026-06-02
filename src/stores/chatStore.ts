@@ -13,6 +13,7 @@ interface ChatState {
   error: string | null;
   editingMessageId: string | null;
   editingContent: string | null;
+  pendingOOCOutput: boolean;
   sendMessage: (content: string, apiKey: string, systemPrompt: string) => Promise<void>;
   clearChat: () => void;
   startNewChat: (greeting?: string) => void;
@@ -29,6 +30,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   error: null,
   editingMessageId: null,
   editingContent: null,
+  pendingOOCOutput: false,
 
   startNewChat: (greeting) => {
     if (greeting) {
@@ -38,9 +40,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
         content: greeting,
         timestamp: Date.now(),
       };
-      set({ messages: [msg], error: null, isStreaming: false, streamingContent: '' });
+      set({ messages: [msg], error: null, isStreaming: false, streamingContent: '', pendingOOCOutput: false });
     } else {
-      set({ messages: [], error: null, isStreaming: false, streamingContent: '' });
+      set({ messages: [], error: null, isStreaming: false, streamingContent: '', pendingOOCOutput: false });
     }
   },
 
@@ -56,31 +58,63 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }
     }
 
-    const userMessage: Message = {
-      id: uuidv4(),
-      role: 'user',
-      content,
-      timestamp: Date.now(),
-    };
+    const isOOC = /^OCC:\s*/i.test(content);
 
-    const allMessages: Message[] = [
+    let userMessage: Message;
+    let oocSystemMsg: Message | null = null;
+
+    if (isOOC) {
+      userMessage = {
+        id: uuidv4(),
+        role: 'user',
+        content,
+        timestamp: Date.now(),
+        occ: true,
+      };
+      const strippedContent = content.replace(/^OCC:\s*/i, '');
+      oocSystemMsg = {
+        id: uuidv4(),
+        role: 'system',
+        content: `[OUT OF CHARACTER — The roleplayer says to you directly: "${strippedContent}". Briefly acknowledge this instruction in one sentence, then immediately continue the roleplay while naturally incorporating this change.]`,
+        timestamp: Date.now(),
+      };
+    } else {
+      userMessage = {
+        id: uuidv4(),
+        role: 'user',
+        content,
+        timestamp: Date.now(),
+      };
+    }
+
+    // Build API messages: system prompt, optional OOC instruction, then base messages (filtering OOC user messages), then current user (if not OOC)
+    const apiMessages: Message[] = [
       { id: uuidv4(), role: 'system' as const, content: systemPrompt, timestamp: Date.now() },
-      ...baseMessages,
-      userMessage,
+      ...(oocSystemMsg ? [oocSystemMsg] : []),
+      ...baseMessages.filter((m) => !(m.role === 'user' && (m as Message & { occ?: boolean }).occ)),
     ];
 
+    if (!isOOC) {
+      apiMessages.push(userMessage);
+    }
+
     // Apply context window management before sending
-    const trimmed = trimMessages(allMessages);
+    const trimmed = trimMessages(apiMessages);
     const messages = trimmed.map((m) => ({ role: m.role, content: m.content }));
 
-    set((state) => ({
-      messages: [...baseMessages, userMessage],
+    const storeMessages = oocSystemMsg
+      ? [...baseMessages, oocSystemMsg, userMessage]
+      : [...baseMessages, userMessage];
+
+    set({
+      messages: storeMessages,
       isStreaming: true,
       streamingContent: '',
       error: null,
       editingMessageId: null,
       editingContent: null,
-    }));
+      pendingOOCOutput: isOOC,
+    });
 
     // Abort stuck requests after 2 minutes (connection stalled, DeepSeek timeout, etc.)
     const STREAM_TIMEOUT_MS = 120_000;
@@ -129,17 +163,21 @@ export const useChatStore = create<ChatState>((set, get) => ({
         }
       }
 
+      const { pendingOOCOutput } = get();
+
       const assistantMessage: Message = {
         id: uuidv4(),
         role: 'assistant',
         content: fullContent,
         timestamp: Date.now(),
+        ...(pendingOOCOutput ? { occ: true } : {}),
       };
 
       set((state) => ({
         messages: [...state.messages, assistantMessage],
         isStreaming: false,
         streamingContent: '',
+        pendingOOCOutput: false,
       }));
     } catch (err) {
       const message =
@@ -156,7 +194,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
   },
 
-  clearChat: () => set({ messages: [], error: null }),
+  clearChat: () => set({ messages: [], error: null, pendingOOCOutput: false }),
 
   startEditing: (messageId) => {
     const msg = get().messages.find((m) => m.id === messageId);
