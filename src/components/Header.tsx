@@ -17,8 +17,8 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <h1 className="text-lg font-semibold text-slate-100">Private AI Roleplay</h1>
-        <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+        <h1 className="text-base sm:text-lg font-semibold text-slate-100">Private AI Roleplay</h1>
+        <span className="hidden sm:inline text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
           deepseek-v4-flash
         </span>
       </div>

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import ChatArea from './components/ChatArea';
@@ -8,13 +7,13 @@ import AboutModal from './components/AboutModal';
 import { useUIStore } from './stores/uiStore';
 
 export default function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { toggleSidebar } = useUIStore();
 
   return (
     <div className="h-dvh flex flex-col bg-slate-950">
-      <Header onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      <Header onToggleSidebar={toggleSidebar} />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar isOpen={sidebarOpen} />
+        <Sidebar />
         <ChatArea />
       </div>
       <SettingsModal />
