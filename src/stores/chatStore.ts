@@ -13,7 +13,7 @@ interface ChatState {
   error: string | null;
   editingMessageId: string | null;
   editingContent: string | null;
-  pendingOOCOutput: boolean;
+  oocInstructions: string[];
   sendMessage: (content: string, apiKey: string, systemPrompt: string) => Promise<void>;
   clearChat: () => void;
   startNewChat: (greeting?: string) => void;
@@ -30,7 +30,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   error: null,
   editingMessageId: null,
   editingContent: null,
-  pendingOOCOutput: false,
+  oocInstructions: [],
 
   startNewChat: (greeting) => {
     if (greeting) {
@@ -40,14 +40,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
         content: greeting,
         timestamp: Date.now(),
       };
-      set({ messages: [msg], error: null, isStreaming: false, streamingContent: '', pendingOOCOutput: false });
+      set({ messages: [msg], error: null, isStreaming: false, streamingContent: '', oocInstructions: [] });
     } else {
-      set({ messages: [], error: null, isStreaming: false, streamingContent: '', pendingOOCOutput: false });
+      set({ messages: [], error: null, isStreaming: false, streamingContent: '', oocInstructions: [] });
     }
   },
 
   sendMessage: async (content, apiKey, systemPrompt) => {
-    const { editingMessageId } = get();
+    const { editingMessageId, oocInstructions } = get();
 
     // If editing a previous message, truncate everything from that point
     let baseMessages = get().messages;
@@ -60,51 +60,53 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     const isOOC = /^OCC:\s*/i.test(content);
 
-    let userMessage: Message;
-    let oocSystemMsg: Message | null = null;
-
+    // Handle OOC: store instruction, add amber bubble, no API call
     if (isOOC) {
-      userMessage = {
+      const strippedContent = content.replace(/^OCC:\s*/i, '');
+      const userMessage: Message = {
         id: uuidv4(),
         role: 'user',
         content,
         timestamp: Date.now(),
         occ: true,
       };
-      const strippedContent = content.replace(/^OCC:\s*/i, '');
-      oocSystemMsg = {
-        id: uuidv4(),
-        role: 'system',
-        content: `[OUT OF CHARACTER — The roleplayer says to you directly: "${strippedContent}". Briefly acknowledge this instruction in one sentence, then immediately continue the roleplay while naturally incorporating this change.]`,
-        timestamp: Date.now(),
-      };
-    } else {
-      userMessage = {
-        id: uuidv4(),
-        role: 'user',
-        content,
-        timestamp: Date.now(),
-      };
+      set({
+        messages: [...baseMessages, userMessage],
+        isStreaming: false,
+        streamingContent: '',
+        error: null,
+        editingMessageId: null,
+        editingContent: null,
+        oocInstructions: [...get().oocInstructions, strippedContent],
+      });
+      return;
     }
 
-    // Build API messages: system prompt, optional OOC instruction, then base messages (filtering OOC user messages), then current user (if not OOC)
+    const userMessage: Message = {
+      id: uuidv4(),
+      role: 'user',
+      content,
+      timestamp: Date.now(),
+    };
+
+    // Build system prompt with OOC instructions if any
+    let effectiveSystemPrompt = systemPrompt;
+    if (oocInstructions.length > 0) {
+      effectiveSystemPrompt = `${systemPrompt}\n\n[OUT OF CHARACTER — Follow these ongoing instructions: ${oocInstructions.join('; ')}]`;
+    }
+
+    // Build API messages: system prompt (with OOC directives), then base messages (filtering OOC user messages), then current user
     const apiMessages: Message[] = [
-      { id: uuidv4(), role: 'system' as const, content: systemPrompt, timestamp: Date.now() },
-      ...(oocSystemMsg ? [oocSystemMsg] : []),
+      { id: uuidv4(), role: 'system' as const, content: effectiveSystemPrompt, timestamp: Date.now() },
       ...baseMessages.filter((m) => !(m.role === 'user' && (m as Message & { occ?: boolean }).occ)),
+      userMessage,
     ];
-
-    if (!isOOC) {
-      apiMessages.push(userMessage);
-    }
 
     // Apply context window management before sending
     const trimmed = trimMessages(apiMessages);
     const messages = trimmed.map((m) => ({ role: m.role, content: m.content }));
 
-    const storeMessages = oocSystemMsg
-      ? [...baseMessages, oocSystemMsg, userMessage]
-      : [...baseMessages, userMessage];
+    const storeMessages = [...baseMessages, userMessage];
 
     set({
       messages: storeMessages,
@@ -113,7 +115,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
       error: null,
       editingMessageId: null,
       editingContent: null,
-      pendingOOCOutput: isOOC,
     });
 
     // Abort stuck requests after 2 minutes (connection stalled, DeepSeek timeout, etc.)
@@ -163,21 +164,17 @@ export const useChatStore = create<ChatState>((set, get) => ({
         }
       }
 
-      const { pendingOOCOutput } = get();
-
       const assistantMessage: Message = {
         id: uuidv4(),
         role: 'assistant',
         content: fullContent,
         timestamp: Date.now(),
-        ...(pendingOOCOutput ? { occ: true } : {}),
       };
 
       set((state) => ({
         messages: [...state.messages, assistantMessage],
         isStreaming: false,
         streamingContent: '',
-        pendingOOCOutput: false,
       }));
     } catch (err) {
       const message =
@@ -194,7 +191,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
   },
 
-  clearChat: () => set({ messages: [], error: null, pendingOOCOutput: false }),
+  clearChat: () => set({ messages: [], error: null, oocInstructions: [] }),
 
   startEditing: (messageId) => {
     const msg = get().messages.find((m) => m.id === messageId);
@@ -204,7 +201,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   cancelEditing: () => set({ editingMessageId: null, editingContent: null }),
 
-  importMessages: (messages) => set({ messages, error: null }),
+  importMessages: (messages) => {
+    const oocInstructions: string[] = [];
+    for (const msg of messages) {
+      if (msg.role === 'user' && (msg as Message & { occ?: boolean }).occ) {
+        const stripped = msg.content.replace(/^OCC:\s*/i, '');
+        oocInstructions.push(stripped);
+      }
+    }
+    set({ messages, error: null, oocInstructions });
+  },
 
   getExportData: (character) => ({
     version: 1,
