@@ -17,8 +17,7 @@ export default function Sidebar() {
   const openAbout = useUIStore((s) => s.openAbout);
 
   const handleExport = () => {
-    if (!selectedCharacter) return;
-    const data = getExportData(selectedCharacter);
+    const data = getExportData();
     exportSession(data);
     toggleSidebar();
   };

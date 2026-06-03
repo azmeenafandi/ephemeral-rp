@@ -5,6 +5,7 @@ import type { Character } from '../types/character';
 import { v4 as uuidv4 } from '../utils/uuid';
 import { trimMessages } from '../utils/contextManager';
 import { API_BASE_URL } from '../config';
+import { useCharacterStore } from './characterStore';
 
 interface ChatState {
   messages: Message[];
@@ -14,11 +15,12 @@ interface ChatState {
   editingMessageId: string | null;
   editingContent: string | null;
   oocInstructions: string[];
+  chatCharacterId: string | null;
   sendMessage: (content: string, apiKey: string, systemPrompt: string) => Promise<void>;
   clearChat: () => void;
   startNewChat: (greeting?: string) => void;
   importMessages: (messages: Message[]) => void;
-  getExportData: (character: Character) => SessionExport;
+  getExportData: () => SessionExport;
   startEditing: (messageId: string) => void;
   cancelEditing: () => void;
 }
@@ -31,8 +33,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
   editingMessageId: null,
   editingContent: null,
   oocInstructions: [],
+  chatCharacterId: null,
 
   startNewChat: (greeting) => {
+    const char = useCharacterStore.getState().selectedCharacter;
     if (greeting) {
       const msg: Message = {
         id: uuidv4(),
@@ -40,14 +44,22 @@ export const useChatStore = create<ChatState>((set, get) => ({
         content: greeting,
         timestamp: Date.now(),
       };
-      set({ messages: [msg], error: null, isStreaming: false, streamingContent: '', oocInstructions: [] });
+      set({ messages: [msg], error: null, isStreaming: false, streamingContent: '', oocInstructions: [], chatCharacterId: char?.id ?? null });
     } else {
-      set({ messages: [], error: null, isStreaming: false, streamingContent: '', oocInstructions: [] });
+      set({ messages: [], error: null, isStreaming: false, streamingContent: '', oocInstructions: [], chatCharacterId: char?.id ?? null });
     }
   },
 
   sendMessage: async (content, apiKey, systemPrompt) => {
-    const { editingMessageId, oocInstructions } = get();
+    const { editingMessageId, oocInstructions, chatCharacterId } = get();
+
+    // If chatCharacterId is not yet set (e.g. imported chat), capture it now
+    if (!chatCharacterId) {
+      const char = useCharacterStore.getState().selectedCharacter;
+      if (char) {
+        set({ chatCharacterId: char.id });
+      }
+    }
 
     // If editing a previous message, truncate everything from that point
     let baseMessages = get().messages;
@@ -191,7 +203,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
   },
 
-  clearChat: () => set({ messages: [], error: null, oocInstructions: [] }),
+  clearChat: () => set({ messages: [], error: null, oocInstructions: [], chatCharacterId: null }),
 
   startEditing: (messageId) => {
     const msg = get().messages.find((m) => m.id === messageId);
@@ -209,13 +221,35 @@ export const useChatStore = create<ChatState>((set, get) => ({
         oocInstructions.push(stripped);
       }
     }
-    set({ messages, error: null, oocInstructions });
+
+    // Try to detect the character from imported system messages
+    const charStore = useCharacterStore.getState();
+    const allChars = [...charStore.builtInCharacters, ...charStore.customCharacters];
+    let chatCharacterId: string | null = null;
+    for (const msg of messages) {
+      if (msg.role === 'system') {
+        const match = allChars.find((c) => c.systemPrompt === msg.content);
+        if (match) {
+          chatCharacterId = match.id;
+          break;
+        }
+      }
+    }
+
+    set({ messages, error: null, oocInstructions, chatCharacterId });
   },
 
-  getExportData: (character) => ({
-    version: 1,
-    exportedAt: new Date().toISOString(),
-    character,
-    messages: get().messages,
-  }),
+  getExportData: () => {
+    const { chatCharacterId } = get();
+    const charStore = useCharacterStore.getState();
+    const allChars = [...charStore.builtInCharacters, ...charStore.customCharacters];
+    const character = allChars.find((c) => c.id === chatCharacterId);
+
+    return {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      character: character ?? { id: 'unknown', name: 'Unknown', description: '', personality: '', scenario: '', systemPrompt: '', greeting: '' },
+      messages: get().messages,
+    };
+  },
 }));
