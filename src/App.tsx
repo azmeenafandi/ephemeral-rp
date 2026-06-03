@@ -10,7 +10,7 @@ export default function App() {
   const { toggleSidebar } = useUIStore();
 
   return (
-    <div className="h-dvh flex flex-col bg-slate-950">
+    <div className="fixed inset-0 flex flex-col bg-slate-950">
       <Header onToggleSidebar={toggleSidebar} />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
