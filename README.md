@@ -27,8 +27,9 @@ The Vite dev server proxies `/api` → `localhost:8787`.
 
 ## Features
 
-- 🎭 **4 built-in characters**: Fantasy Mage, Cyberpunk Hacker, Space Captain, Noir Detective
+- 🎭 **10 built-in characters**: 4 fantasy (Fantasy Mage, Cyberpunk Hacker, Space Captain, Noir Detective) + 6 real-world experts (Maths Professor, Life Guidance Counselor, Systems Architect, History Scholar, Culinary Chef, Wilderness Naturalist)
 - ✨ **Custom characters**: Create, edit, delete your own personas
+- 📝 **Markdown templates**: Add new built-in characters by creating a `.md` file — no coding required
 - 💬 **Streaming chat**: Real-time SSE streaming from DeepSeek with 120s timeout
 - ✏️ **Edit messages**: Backtrack to any previous message and branch the conversation
 - 📥 **Export sessions**: Download conversations as JSON files
@@ -80,7 +81,7 @@ src/
 ├── stores/         # Zustand stores (apiKey, character, chat, UI)
 ├── types/          # TypeScript interfaces (Character, Message, Session)
 ├── utils/          # Prompt builder, context manager, session I/O, UUID
-└── characters/     # Built-in character definitions
+└── characters/     # Built-in character templates (Markdown-based)
 worker/
 ├── src/index.ts    # Cloudflare Worker fetch handler
 └── wrangler.toml   # Zero storage configuration
