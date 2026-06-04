@@ -20,13 +20,19 @@ describe('characterStore', () => {
     });
   });
 
-  it('has 4 built-in characters', () => {
+  it('has 10 built-in characters', () => {
     const chars = useCharacterStore.getState().builtInCharacters;
-    expect(chars).toHaveLength(4);
+    expect(chars).toHaveLength(10);
     expect(chars[0].name).toBe('Captain Zara Voss');
-    expect(chars[1].name).toBe('Detective Marlowe');
-    expect(chars[2].name).toBe('Eldrin Starweaver');
-    expect(chars[3].name).toBe('Nyx');
+    expect(chars[1].name).toBe('Chef Marc Rossi');
+    expect(chars[2].name).toBe('Detective Marlowe');
+    expect(chars[3].name).toBe('Eldrin Starweaver');
+    expect(chars[4].name).toBe('Dr. Helena Blackwell');
+    expect(chars[5].name).toBe('Dr. Evelyn March');
+    expect(chars[6].name).toBe('Professor Armitage');
+    expect(chars[7].name).toBe('Nyx');
+    expect(chars[8].name).toBe('Arun Krishnamurthy');
+    expect(chars[9].name).toBe('Sage Ironwood');
   });
 
   it('selects the first built-in character by default', () => {
@@ -34,7 +40,7 @@ describe('characterStore', () => {
   });
 
   it('selects a different character by id', () => {
-    const eldrin = useCharacterStore.getState().builtInCharacters[2];
+    const eldrin = useCharacterStore.getState().builtInCharacters[3];
     useCharacterStore.getState().selectCharacter(eldrin.id);
     expect(useCharacterStore.getState().selectedCharacter?.name).toBe('Eldrin Starweaver');
   });
