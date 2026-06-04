@@ -2,6 +2,8 @@
 
 A privacy-first, browser-based AI roleplay application. Your API key and conversations exist only in your browser's memory — nothing is ever stored server-side.
 
+> **Live demo**: [rolepay.beeroolabs.com](https://rolepay.beeroolabs.com)
+
 ## Architecture
 
 ```
