@@ -117,7 +117,7 @@ Users can:
 * Edit a custom character
 * Delete a custom character
 
-Built-in characters are bundled with the frontend.
+Built-in characters are defined in Markdown templates and bundled at build time.
 
 Custom characters exist only in browser memory.
 
@@ -233,12 +233,27 @@ interface Character {
 
 ## Built-In Characters
 
-Provide at least:
+The application ships with 10 built-in characters across diverse domains:
 
-* Fantasy Mage
-* Cyberpunk Hacker
-* Space Captain
-* Detective
+**Fantasy & Fiction (4):**
+* Fantasy Mage (Eldrin Starweaver) — Ancient elven archmage
+* Cyberpunk Hacker (Nyx) — Legendary netrunner in Neo-Tokyo
+* Space Captain (Zara Voss) — Freighter captain in deep space
+* Noir Detective (Marlowe) — 1940s LA private investigator
+
+**Real-World Experts (6):**
+* Maths Professor (Prof. Armitage) — Cambridge mathematician
+* Life Guidance Counselor (Dr. Evelyn March) — Compassionate personal guidance
+* Systems Architect (Arun Krishnamurthy) — Distributed systems expert
+* History Scholar (Dr. Helena Blackwell) — Oxford history professor
+* Culinary Chef (Marc Rossi) — Italian-French trained chef
+* Wilderness Naturalist (Sage Ironwood) — Forest guide and ecologist
+
+Characters are defined as Markdown templates in `src/characters/templates/`.
+Each file is a human-readable document with sections for personality, scenario,
+greeting, voice hints, and rules. Non-technical users can add characters by
+creating new `.md` files — no coding required. System prompts are auto-generated
+from the template fields at build time.
 
 ---
 
