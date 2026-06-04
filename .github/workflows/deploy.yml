@@ -18,7 +18,9 @@ jobs:
       - run: npm test -- --run
 
       - name: Build frontend
-        run: VITE_API_BASE_URL=https://private-ai-roleplay.azmeen-afandi.workers.dev/api npm run build
+        run: |
+          VITE_API_BASE_URL=https://private-ai-roleplay.azmeen-afandi.workers.dev/api npm run build
+          rm -rf .wrangler
         working-directory: .
 
       - name: Deploy Worker
