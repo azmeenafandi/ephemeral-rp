@@ -70,11 +70,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }
     }
 
-    const isOOC = /^OCC:\s*/i.test(content);
+    const isOOC = /^OOC:\s*/i.test(content);
 
     // Handle OOC: store instruction, add amber bubble, no API call
     if (isOOC) {
-      const strippedContent = content.replace(/^OCC:\s*/i, '');
+      const strippedContent = content.replace(/^OOC:\s*/i, '');
       const userMessage: Message = {
         id: uuidv4(),
         role: 'user',
@@ -217,7 +217,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const oocInstructions: string[] = [];
     for (const msg of messages) {
       if (msg.role === 'user' && (msg as Message & { occ?: boolean }).occ) {
-        const stripped = msg.content.replace(/^OCC:\s*/i, '');
+        const stripped = msg.content.replace(/^OOC:\s*/i, '');
         oocInstructions.push(stripped);
       }
     }
