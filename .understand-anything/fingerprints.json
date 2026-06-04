@@ -1,16 +1,26 @@
 {
   "version": "1.0.0",
-  "gitCommitHash": "fcebaa6477ff9025ab9057661f1b9aa953bc1591",
-  "generatedAt": "2026-06-01T01:22:26.489Z",
+  "gitCommitHash": "6564cd5029ed72df94e8120db0c17d0e05540635",
+  "generatedAt": "2026-06-04T02:36:03.303Z",
   "files": {
-    "CLOUDFLARE.md": {
-      "filePath": "CLOUDFLARE.md",
-      "contentHash": "3d4ec750d42d06c10f284a10797c0f162df8a3b63c96b8ff1d34ec526eaad5a3",
+    ".github/workflows/deploy.yml": {
+      "filePath": ".github/workflows/deploy.yml",
+      "contentHash": "f2a53ad7bda20aeeac00e086c0c1b4f8e322f8f4af11c49f9563ab08d6ef0998",
       "functions": [],
       "classes": [],
       "imports": [],
       "exports": [],
-      "totalLines": 297,
+      "totalLines": 31,
+      "hasStructuralAnalysis": true
+    },
+    "CLOUDFLARE.md": {
+      "filePath": "CLOUDFLARE.md",
+      "contentHash": "3246564ce4838c600e4204fe0dd9c434432d7b0671afba634bf7464532537cb3",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 78,
       "hasStructuralAnalysis": true
     },
     "eslint.config.js": {
@@ -92,12 +102,12 @@
     },
     "README.md": {
       "filePath": "README.md",
-      "contentHash": "403602d65266569adf9c98ffc45ec7654a011c34f9c40e88a78eff913953e22a",
+      "contentHash": "4bf965006fe0bd690a05b9e757d8c90862cbbaf0086c57712986925f50a04f1d",
       "functions": [],
       "classes": [],
       "imports": [],
       "exports": [],
-      "totalLines": 100,
+      "totalLines": 95,
       "hasStructuralAnalysis": true
     },
     "SPEC.md": {
@@ -112,7 +122,7 @@
     },
     "src/App.tsx": {
       "filePath": "src/App.tsx",
-      "contentHash": "8c4b6fa56410391bf61771f047d2a8784c0d3357df5e5b1ea0be4f89b6107dfd",
+      "contentHash": "102624b768300070eaaf9848c304865d3e7aa98a708d325252dfe060ea61d0e3",
       "functions": [
         {
           "name": "App",
@@ -123,12 +133,6 @@
       ],
       "classes": [],
       "imports": [
-        {
-          "source": "react",
-          "specifiers": [
-            "useState"
-          ]
-        },
         {
           "source": "./components/Header",
           "specifiers": [
@@ -175,7 +179,7 @@
       "exports": [
         "App"
       ],
-      "totalLines": 26,
+      "totalLines": 25,
       "hasStructuralAnalysis": true
     },
     "src/characters/builtIn.ts": {
@@ -275,13 +279,13 @@
     },
     "src/components/AboutModal.tsx": {
       "filePath": "src/components/AboutModal.tsx",
-      "contentHash": "a20425e3055881823266b83aa7143725e66a822b8278b2b7c35d1f713de459d5",
+      "contentHash": "fe05dbe3cc6dcb6fc467fa0cf42e554ac3fad6d7921a3a125ba2fd2344064843",
       "functions": [
         {
           "name": "AboutModal",
           "params": [],
           "exported": true,
-          "lineCount": 96
+          "lineCount": 108
         }
       ],
       "classes": [],
@@ -296,7 +300,7 @@
       "exports": [
         "AboutModal"
       ],
-      "totalLines": 99,
+      "totalLines": 111,
       "hasStructuralAnalysis": true
     },
     "src/components/CharacterEditor.tsx": {
@@ -456,7 +460,7 @@
     },
     "src/components/Header.tsx": {
       "filePath": "src/components/Header.tsx",
-      "contentHash": "c7a093af9e362d7437786a9b234bd2c25a1dcb83d3ef1c249e2a2d723297b910",
+      "contentHash": "64da7ddd1367f45e903b65b860638c688e44485b2f5ad3c417b24b01a7039829",
       "functions": [
         {
           "name": "Header",
@@ -537,13 +541,13 @@
     },
     "src/components/MessageList.tsx": {
       "filePath": "src/components/MessageList.tsx",
-      "contentHash": "439076d43c2b7d5f9e7f7161e78328d563b8b68728220b1af519ccb5aad63ad7",
+      "contentHash": "8da8cfa5781fbd460abe7badaa9bff313a1158a5fa834d011ff6c462009b4924",
       "functions": [
         {
           "name": "MessageList",
           "params": [],
           "exported": true,
-          "lineCount": 67
+          "lineCount": 73
         }
       ],
       "classes": [],
@@ -589,12 +593,12 @@
       "exports": [
         "MessageList"
       ],
-      "totalLines": 75,
+      "totalLines": 81,
       "hasStructuralAnalysis": true
     },
     "src/components/SettingsModal.tsx": {
       "filePath": "src/components/SettingsModal.tsx",
-      "contentHash": "2702c7feeb8d9d1df110ed3ec7a496075eb9097740aeee33850dad9b10161cb4",
+      "contentHash": "e05a131318c06b87475dfb06fd4ebf223097e30bc0357ba7f934d04aa13547f7",
       "functions": [
         {
           "name": "SettingsModal",
@@ -632,15 +636,13 @@
     },
     "src/components/Sidebar.tsx": {
       "filePath": "src/components/Sidebar.tsx",
-      "contentHash": "2da65e2a96fab4c074f68907e2d1dd3b5cace60f3b1d44e39dfa072e722fdd1f",
+      "contentHash": "bc0bb1e9029916179d26dffdb071c68a4be2802fc62337c8fd0a554517760525",
       "functions": [
         {
           "name": "Sidebar",
-          "params": [
-            "{ isOpen }"
-          ],
+          "params": [],
           "exported": true,
-          "lineCount": 72
+          "lineCount": 97
         }
       ],
       "classes": [],
@@ -680,7 +682,7 @@
       "exports": [
         "Sidebar"
       ],
-      "totalLines": 83,
+      "totalLines": 104,
       "hasStructuralAnalysis": true
     },
     "src/components/StreamingMessage.tsx": {
@@ -832,7 +834,7 @@
     },
     "src/stores/__tests__/chatStore.test.ts": {
       "filePath": "src/stores/__tests__/chatStore.test.ts",
-      "contentHash": "ffb970b476ec85da610893cb2bd3beb43f43aafefe3416dc3cba78ae1d512ab6",
+      "contentHash": "9fd2c05af05bc7ee667d28151e95616420ec96803c0aa76c6c4b856a362bd337",
       "functions": [],
       "classes": [],
       "imports": [
@@ -850,10 +852,16 @@
           "specifiers": [
             "useChatStore"
           ]
+        },
+        {
+          "source": "../characterStore",
+          "specifiers": [
+            "useCharacterStore"
+          ]
         }
       ],
       "exports": [],
-      "totalLines": 57,
+      "totalLines": 82,
       "hasStructuralAnalysis": true
     },
     "src/stores/__tests__/uiStore.test.ts": {
@@ -940,7 +948,7 @@
     },
     "src/stores/chatStore.ts": {
       "filePath": "src/stores/chatStore.ts",
-      "contentHash": "c30e36fa9b29066c9c427f4bfd8a548dd5ba6206e3ea4ecc8c372341f22677a6",
+      "contentHash": "e74a212f6ead56027172292754661630c1b36048cfb317212d789dcdac07414f",
       "functions": [],
       "classes": [],
       "imports": [
@@ -985,12 +993,18 @@
           "specifiers": [
             "API_BASE_URL"
           ]
+        },
+        {
+          "source": "./characterStore",
+          "specifiers": [
+            "useCharacterStore"
+          ]
         }
       ],
       "exports": [
         "useChatStore"
       ],
-      "totalLines": 178,
+      "totalLines": 256,
       "hasStructuralAnalysis": true
     },
     "src/stores/uiStore.ts": {
@@ -1039,12 +1053,12 @@
     },
     "src/types/message.ts": {
       "filePath": "src/types/message.ts",
-      "contentHash": "d73932a606377cb0c6ea1bf2d13e4d3e36b54b649194cd34d2970c00875bc29b",
+      "contentHash": "737d8719b055513a2ab8065cd54ad3fe6fd7c226c84a3fe6665b9f3f6870489e",
       "functions": [],
       "classes": [],
       "imports": [],
       "exports": [],
-      "totalLines": 7,
+      "totalLines": 8,
       "hasStructuralAnalysis": true
     },
     "src/types/session.ts": {
@@ -1370,12 +1384,12 @@
     },
     "src/vite-env.d.ts": {
       "filePath": "src/vite-env.d.ts",
-      "contentHash": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
+      "contentHash": "3189ef9fd8b43360372bb182e0782ab87aa64f34383e1f95b63388bbd54ea6bd",
       "functions": [],
       "classes": [],
       "imports": [],
       "exports": [],
-      "totalLines": 2,
+      "totalLines": 11,
       "hasStructuralAnalysis": true
     },
     "tsconfig.json": {
@@ -1400,7 +1414,7 @@
     },
     "vite.config.ts": {
       "filePath": "vite.config.ts",
-      "contentHash": "88dda6e4965f8766efed021d3fe51cb86099f37b461ee7bc0325a6c0ac726daf",
+      "contentHash": "4818cd074a0dac6a572c659f2b1f327ed9a4c2f7d610cdea5c3e66addd0ab96c",
       "functions": [],
       "classes": [],
       "imports": [
@@ -1423,6 +1437,12 @@
           ]
         },
         {
+          "source": "fs",
+          "specifiers": [
+            "readFileSync"
+          ]
+        },
+        {
           "source": "@cloudflare/vite-plugin",
           "specifiers": [
             "cloudflare"
@@ -1430,7 +1450,7 @@
         }
       ],
       "exports": [],
-      "totalLines": 30,
+      "totalLines": 34,
       "hasStructuralAnalysis": true
     },
     "vitest.config.ts": {

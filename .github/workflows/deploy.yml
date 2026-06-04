@@ -3,6 +3,12 @@ name: Deploy
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '.understand-anything/**'
+      - 'README.md'
+      - 'LICENSE'
+      - 'CLOUDFLARE.md'
+      - 'SPEC.md'
 
 jobs:
   deploy:
