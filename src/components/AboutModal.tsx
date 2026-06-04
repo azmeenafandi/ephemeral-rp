@@ -64,6 +64,19 @@ export default function AboutModal() {
               </p>
             </section>
 
+            {/* Characters */}
+            <section>
+              <h3 className="text-slate-100 font-medium mb-1.5">🎭 Characters & Templates</h3>
+              <p>
+                The app includes <strong className="text-slate-200">10 built-in characters</strong> across
+                fantasy, cyberpunk, sci-fi, noir, and real-world expert domains (maths, history,
+                cooking, counselling, tech, and nature). Custom characters can be created through
+                the editor, and new built-in characters can be added by anyone as simple{' '}
+                <strong className="text-slate-200">Markdown template files</strong> —
+                no coding required.
+              </p>
+            </section>
+
             {/* Session export */}
             <section>
               <h3 className="text-slate-100 font-medium mb-1.5">💾 Save Your Sessions</h3>
