@@ -89,7 +89,7 @@ worker/
 
 ## Testing
 
-- **60 tests**, 100% passing
+- **61 tests**, 100% passing
 - Frontend: Vitest + React Testing Library + jsdom
 - Worker: Vitest (direct module import)
 - Covers: session I/O validation, prompt building, context trimming, store operations, component rendering, worker integration
