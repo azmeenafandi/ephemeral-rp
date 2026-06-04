@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { Character } from '../types/character';
-import { builtInCharacters } from '../characters/builtIn';
+import { loadBuiltInCharacters } from '../characters/load';
 import { v4 as uuidv4 } from '../utils/uuid';
 
 interface CharacterState {
@@ -15,9 +15,9 @@ interface CharacterState {
 }
 
 export const useCharacterStore = create<CharacterState>((set, get) => ({
-  builtInCharacters,
+  builtInCharacters: [],
   customCharacters: [],
-  selectedCharacter: builtInCharacters[0],
+  selectedCharacter: null,
 
   selectCharacter: (id) => {
     const allChars = [...get().builtInCharacters, ...get().customCharacters];
@@ -68,3 +68,11 @@ export const useCharacterStore = create<CharacterState>((set, get) => ({
     return char.systemPrompt;
   },
 }));
+
+// Load built-in characters asynchronously after store creation
+loadBuiltInCharacters().then((chars) => {
+  useCharacterStore.setState({
+    builtInCharacters: chars,
+    selectedCharacter: chars[0] ?? null,
+  });
+});
