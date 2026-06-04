@@ -52,6 +52,18 @@ export default function AboutModal() {
               </p>
             </section>
 
+            {/* OOC */}
+            <section>
+              <h3 className="text-slate-100 font-medium mb-1.5">🎭 Out Of Character (OOC)</h3>
+              <p>
+                Steer the AI's behavior mid-conversation by typing{' '}
+                <code className="text-amber-300 bg-amber-900/30 px-1 rounded">OCC: your instruction</code> as a message.
+                The directive is stored and quietly applied to all future responses in that session.
+                Examples: <em>"OCC: be more poetic"</em>, <em>"OCC: use shorter sentences"</em>.
+                Your OOC message appears in amber — no response is generated for it.
+              </p>
+            </section>
+
             {/* Session export */}
             <section>
               <h3 className="text-slate-100 font-medium mb-1.5">💾 Save Your Sessions</h3>
