@@ -1,16 +1,16 @@
 {
   "version": "1.0.0",
-  "gitCommitHash": "6564cd5029ed72df94e8120db0c17d0e05540635",
-  "generatedAt": "2026-06-04T02:36:03.303Z",
+  "gitCommitHash": "979349422ecde64e1121fbd08c5a2e390d0a0448",
+  "generatedAt": "2026-06-05T15:19:13.260Z",
   "files": {
     ".github/workflows/deploy.yml": {
       "filePath": ".github/workflows/deploy.yml",
-      "contentHash": "f2a53ad7bda20aeeac00e086c0c1b4f8e322f8f4af11c49f9563ab08d6ef0998",
+      "contentHash": "afbfb7c168ac85e6a31831e27bf0d6c79e57445a0a809614f3513562d3ffa0ef",
       "functions": [],
       "classes": [],
       "imports": [],
       "exports": [],
-      "totalLines": 31,
+      "totalLines": 40,
       "hasStructuralAnalysis": true
     },
     "CLOUDFLARE.md": {
@@ -102,22 +102,22 @@
     },
     "README.md": {
       "filePath": "README.md",
-      "contentHash": "4bf965006fe0bd690a05b9e757d8c90862cbbaf0086c57712986925f50a04f1d",
+      "contentHash": "285264b9912915d6ab059f7841f1426fd6719220566c5f9ec5aaa270a34d6db8",
       "functions": [],
       "classes": [],
       "imports": [],
       "exports": [],
-      "totalLines": 95,
+      "totalLines": 96,
       "hasStructuralAnalysis": true
     },
     "SPEC.md": {
       "filePath": "SPEC.md",
-      "contentHash": "749cb21abe1e8c621145241189ba10f13fb56ed205d010796e5c2f3f0c448ced",
+      "contentHash": "a6749ce0b562530de600bd85662374b97937b37619c90ca676f5f9749b892329",
       "functions": [],
       "classes": [],
       "imports": [],
       "exports": [],
-      "totalLines": 438,
+      "totalLines": 453,
       "hasStructuralAnalysis": true
     },
     "src/App.tsx": {
@@ -201,6 +201,148 @@
       "totalLines": 136,
       "hasStructuralAnalysis": true
     },
+    "src/characters/load.ts": {
+      "filePath": "src/characters/load.ts",
+      "contentHash": "badd0e5df88a1d7ed9255eb9a584f01d8418caf5de320c29a01d43094eab7e0d",
+      "functions": [
+        {
+          "name": "parseTemplate",
+          "params": [
+            "markdown"
+          ],
+          "returnType": "TemplateData",
+          "exported": false,
+          "lineCount": 57
+        },
+        {
+          "name": "loadBuiltInCharacters",
+          "params": [],
+          "returnType": "Promise<Character[]>",
+          "exported": true,
+          "lineCount": 40
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "../types/character",
+          "specifiers": [
+            "Character"
+          ]
+        },
+        {
+          "source": "../utils/promptBuilder",
+          "specifiers": [
+            "buildSystemPromptFromParts"
+          ]
+        }
+      ],
+      "exports": [
+        "loadBuiltInCharacters"
+      ],
+      "totalLines": 118,
+      "hasStructuralAnalysis": true
+    },
+    "src/characters/templates/captain-zara-voss.md": {
+      "filePath": "src/characters/templates/captain-zara-voss.md",
+      "contentHash": "bf5e434b35810f5926d038d83b86849ddf9691f43ad02f840eccb348617dfcd9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 34,
+      "hasStructuralAnalysis": true
+    },
+    "src/characters/templates/culinary-chef.md": {
+      "filePath": "src/characters/templates/culinary-chef.md",
+      "contentHash": "88eac619c684a15d27dcd42cf2b2636593d12f014e83010b16961ddf2431a1a8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 33,
+      "hasStructuralAnalysis": true
+    },
+    "src/characters/templates/detective-marlowe.md": {
+      "filePath": "src/characters/templates/detective-marlowe.md",
+      "contentHash": "d6f7f6e6ac78abe3f6091e8d65df1263781d898ff09c2ffc45725ef7e7b6ff75",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 34,
+      "hasStructuralAnalysis": true
+    },
+    "src/characters/templates/eldrin-starweaver.md": {
+      "filePath": "src/characters/templates/eldrin-starweaver.md",
+      "contentHash": "6144f28bf1a2731fed846a28da441f8af89e9aa2366911d5d30aceabd4daa349",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 34,
+      "hasStructuralAnalysis": true
+    },
+    "src/characters/templates/history-scholar.md": {
+      "filePath": "src/characters/templates/history-scholar.md",
+      "contentHash": "e1215c13ac21ce8478f2a3e453f5317944c167ca68748dc0ca6ae60c49541d29",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 33,
+      "hasStructuralAnalysis": true
+    },
+    "src/characters/templates/life-guidance-counselor.md": {
+      "filePath": "src/characters/templates/life-guidance-counselor.md",
+      "contentHash": "0fd51ab71dd2cf9692c32ff2dea7365e6ab63253be7267357605a98ae07ebdb3",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 33,
+      "hasStructuralAnalysis": true
+    },
+    "src/characters/templates/maths-professor.md": {
+      "filePath": "src/characters/templates/maths-professor.md",
+      "contentHash": "51320fa98e15aa75af7ad773017e249cd6605de5724aa5cd262c01079f90cec1",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 33,
+      "hasStructuralAnalysis": true
+    },
+    "src/characters/templates/nyx.md": {
+      "filePath": "src/characters/templates/nyx.md",
+      "contentHash": "a2b077d5b3adbc0fe90d83efe0df7167851091040749bd6d3817bf83f4e5036b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 34,
+      "hasStructuralAnalysis": true
+    },
+    "src/characters/templates/systems-architect.md": {
+      "filePath": "src/characters/templates/systems-architect.md",
+      "contentHash": "363964057b37d05507131ebf02b3b8847f6eb8b6cbcccc5c13cebf7469c919b7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 33,
+      "hasStructuralAnalysis": true
+    },
+    "src/characters/templates/wilderness-naturalist.md": {
+      "filePath": "src/characters/templates/wilderness-naturalist.md",
+      "contentHash": "c836510ef5f81ffb085d22095aca921c5c197ce0caa2e76f0de270428362c7e0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 33,
+      "hasStructuralAnalysis": true
+    },
     "src/components/__tests__/EmptyState.test.tsx": {
       "filePath": "src/components/__tests__/EmptyState.test.tsx",
       "contentHash": "0f5951112d510e507ea5caf45592f29ed0e9f198708398eb7ddc77f53257424b",
@@ -279,13 +421,13 @@
     },
     "src/components/AboutModal.tsx": {
       "filePath": "src/components/AboutModal.tsx",
-      "contentHash": "fe05dbe3cc6dcb6fc467fa0cf42e554ac3fad6d7921a3a125ba2fd2344064843",
+      "contentHash": "07077111ae53c20c8e2651085c19ae2195f02d155a0322cfe8bc390e23a4cb33",
       "functions": [
         {
           "name": "AboutModal",
           "params": [],
           "exported": true,
-          "lineCount": 108
+          "lineCount": 121
         }
       ],
       "classes": [],
@@ -300,7 +442,7 @@
       "exports": [
         "AboutModal"
       ],
-      "totalLines": 111,
+      "totalLines": 124,
       "hasStructuralAnalysis": true
     },
     "src/components/CharacterEditor.tsx": {
@@ -808,8 +950,15 @@
     },
     "src/stores/__tests__/characterStore.test.ts": {
       "filePath": "src/stores/__tests__/characterStore.test.ts",
-      "contentHash": "15f391d9b764470759055c0752035b7663128317dfcba543ad039aba26c19aea",
-      "functions": [],
+      "contentHash": "cdd510aad60d168761e48248cbe797784b3ae48399c1fa8605c1498489ba85d9",
+      "functions": [
+        {
+          "name": "waitForCharacters",
+          "params": [],
+          "exported": false,
+          "lineCount": 5
+        }
+      ],
       "classes": [],
       "imports": [
         {
@@ -818,7 +967,8 @@
             "describe",
             "it",
             "expect",
-            "beforeEach"
+            "beforeEach",
+            "vi"
           ]
         },
         {
@@ -829,7 +979,7 @@
         }
       ],
       "exports": [],
-      "totalLines": 106,
+      "totalLines": 120,
       "hasStructuralAnalysis": true
     },
     "src/stores/__tests__/chatStore.test.ts": {
@@ -911,7 +1061,7 @@
     },
     "src/stores/characterStore.ts": {
       "filePath": "src/stores/characterStore.ts",
-      "contentHash": "be17dc32a6432b38c8cd0b2dbac1e52efd0a72d088569ca15c78cdb1bc4386a9",
+      "contentHash": "0102d6dc0f3ea8f5157a49812fc009025122f08774ed5577b6f6f3b80c6c778e",
       "functions": [],
       "classes": [],
       "imports": [
@@ -928,9 +1078,9 @@
           ]
         },
         {
-          "source": "../characters/builtIn",
+          "source": "../characters/load",
           "specifiers": [
-            "builtInCharacters"
+            "loadBuiltInCharacters"
           ]
         },
         {
@@ -943,12 +1093,12 @@
       "exports": [
         "useCharacterStore"
       ],
-      "totalLines": 71,
+      "totalLines": 79,
       "hasStructuralAnalysis": true
     },
     "src/stores/chatStore.ts": {
       "filePath": "src/stores/chatStore.ts",
-      "contentHash": "e74a212f6ead56027172292754661630c1b36048cfb317212d789dcdac07414f",
+      "contentHash": "9509fd058ca89cdda5e9ee630a55a516589586276d24192eb34db70a3c3ec642",
       "functions": [],
       "classes": [],
       "imports": [
@@ -1004,7 +1154,7 @@
       "exports": [
         "useChatStore"
       ],
-      "totalLines": 256,
+      "totalLines": 258,
       "hasStructuralAnalysis": true
     },
     "src/stores/uiStore.ts": {
@@ -1271,16 +1421,18 @@
     },
     "src/utils/promptBuilder.ts": {
       "filePath": "src/utils/promptBuilder.ts",
-      "contentHash": "3e89fcb7fc5c579a44fea4f0e48c591f9d146d7284be195ea46786d393793f9e",
+      "contentHash": "ed2f2fb1bab099e28e3c8483f4d3d5651a5aff62af53e0a0367777d19d89b61a",
       "functions": [
         {
           "name": "buildSystemPrompt",
           "params": [
-            "character"
+            "character",
+            "voiceHints",
+            "customRules"
           ],
           "returnType": "string",
           "exported": true,
-          "lineCount": 19
+          "lineCount": 30
         },
         {
           "name": "buildSystemPromptFromParts",
@@ -1288,11 +1440,13 @@
             "name",
             "description",
             "personality",
-            "scenario"
+            "scenario",
+            "voiceHints",
+            "customRules"
           ],
           "returnType": "string",
           "exported": true,
-          "lineCount": 16
+          "lineCount": 22
         }
       ],
       "classes": [],
@@ -1308,7 +1462,7 @@
         "buildSystemPrompt",
         "buildSystemPromptFromParts"
       ],
-      "totalLines": 39,
+      "totalLines": 56,
       "hasStructuralAnalysis": true
     },
     "src/utils/sessionIO.ts": {
