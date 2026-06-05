@@ -150,13 +150,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
       const decoder = new TextDecoder();
       let fullContent = '';
+      let remainder = '';
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
-        const chunk = decoder.decode(value, { stream: true });
+        const chunk = remainder + decoder.decode(value, { stream: true });
         const lines = chunk.split('\n');
+        remainder = lines.pop() || '';
 
         for (const line of lines) {
           if (line.startsWith('data: ')) {
