@@ -124,7 +124,7 @@ export default function CharacterEditor() {
   if (!isOpen) return null;
 
   const handleSave = async () => {
-    if (!form.name.trim() || !form.description.trim() || !form.greeting.trim()) return;
+    if (!form.name.trim() || !form.description.trim()) return;
 
     // Auto-generate missing fields if needed
     if (needsGeneration) {
@@ -155,6 +155,9 @@ export default function CharacterEditor() {
         return;
       }
     }
+
+    // Greeting is required for final save
+    if (!form.greeting.trim()) return;
 
     // Build system prompt from structured fields (always)
     const systemPrompt = buildSystemPromptFromParts(
@@ -190,7 +193,7 @@ export default function CharacterEditor() {
     }
   };
 
-  const canSave = form.name.trim() && form.description.trim() && form.greeting.trim();
+  const canSave = form.name.trim() && form.description.trim() && (needsGeneration || form.greeting.trim());
 
   const buttonText = generating
     ? 'Generating...'
