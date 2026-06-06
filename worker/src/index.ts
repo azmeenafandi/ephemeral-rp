@@ -1,6 +1,7 @@
 interface ChatRequest {
   apiKey: string;
   messages: { role: string; content: string }[];
+  stream?: boolean;
 }
 
 export default {
@@ -53,7 +54,7 @@ export default {
           model: 'deepseek-v4-flash',
           messages: body.messages,
           max_tokens: 8192,
-          stream: true,
+          stream: body.stream !== false,
         }),
       });
 
