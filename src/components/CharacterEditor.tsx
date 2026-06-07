@@ -121,43 +121,34 @@ export default function CharacterEditor() {
     );
   }, [form.personality, form.scenario, form.greeting, form.voiceHints, form.rules]);
 
-  const handleSave = async () => {
-    if (!form.name.trim() || !form.description.trim()) return;
-
-    // Auto-generate missing fields if needed
-    if (needsGeneration) {
-      setGenerating(true);
-      setError(null);
-      try {
-        const apiKey = useApiKeyStore.getState().apiKey;
-        if (!apiKey) {
-          setError('No API key configured. Please set your API key first.');
-          setGenerating(false);
-          return;
-        }
-        const generated = await autoGenerateFields(form.name.trim(), form.description.trim(), apiKey);
-        setForm((prev) => ({
-          ...prev,
-          personality: prev.personality.trim() || generated.personality || '',
-          scenario: prev.scenario.trim() || generated.scenario || '',
-          greeting: prev.greeting.trim() || generated.greeting || '',
-          voiceHints: prev.voiceHints.length > 0 ? prev.voiceHints : generated.voiceHints || [],
-          rules: prev.rules.length > 0 ? prev.rules : generated.rules || [],
-        }));
-        // After generation, user reviews and clicks again to save
-        setGenerating(false);
-        return;
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Auto-generation failed');
+  const handleGenerate = async () => {
+    setGenerating(true);
+    setError(null);
+    try {
+      const apiKey = useApiKeyStore.getState().apiKey;
+      if (!apiKey) {
+        setError('No API key configured. Please set your API key first.');
         setGenerating(false);
         return;
       }
+      const generated = await autoGenerateFields(form.name.trim(), form.description.trim(), apiKey);
+      setForm((prev) => ({
+        ...prev,
+        personality: prev.personality.trim() || generated.personality || '',
+        scenario: prev.scenario.trim() || generated.scenario || '',
+        greeting: prev.greeting.trim() || generated.greeting || '',
+        voiceHints: prev.voiceHints.length > 0 ? prev.voiceHints : generated.voiceHints || [],
+        rules: prev.rules.length > 0 ? prev.rules : generated.rules || [],
+      }));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Auto-generation failed');
     }
+    setGenerating(false);
+  };
 
-    // Greeting is required for final save
+  const handleSave = () => {
     if (!form.greeting.trim()) return;
 
-    // Build system prompt from structured fields (always)
     const systemPrompt = buildSystemPromptFromParts(
       form.name.trim(),
       form.description.trim(),
@@ -182,6 +173,15 @@ export default function CharacterEditor() {
       createCharacter(char);
     }
     closeEditor();
+  };
+
+  const handleClick = async () => {
+    if (!form.name.trim() || !form.description.trim()) return;
+    if (needsGeneration) {
+      await handleGenerate();
+    } else {
+      handleSave();
+    }
   };
 
   const handleDelete = () => {
@@ -240,7 +240,7 @@ export default function CharacterEditor() {
           <div className="flex gap-2">
             <button onClick={closeEditor} className="btn-secondary text-sm">Cancel</button>
             <button
-              onClick={handleSave}
+              onClick={handleClick}
               disabled={!canSave || generating}
               className="btn-primary text-sm"
             >
