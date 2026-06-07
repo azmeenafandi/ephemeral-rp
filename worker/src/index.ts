@@ -1,14 +1,32 @@
-interface ChatRequest {
-  apiKey: string;
-  messages: { role: string; content: string }[];
-  stream?: boolean;
-}
-
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
+
+interface ValidatedRequest {
+  apiKey: string;
+  messages: { role: string; content: string }[];
+  stream?: boolean;
+}
+
+function validateRequest(body: unknown): ValidatedRequest {
+  if (!body || typeof body !== 'object') {
+    throw { status: 400, message: 'Invalid JSON body' };
+  }
+  const b = body as Record<string, unknown>;
+  if (!b.apiKey || typeof b.apiKey !== 'string') {
+    throw { status: 400, message: 'Missing or invalid API key' };
+  }
+  if (!Array.isArray(b.messages) || b.messages.length === 0) {
+    throw { status: 400, message: 'Messages array is required and must not be empty' };
+  }
+  return {
+    apiKey: b.apiKey as string,
+    messages: b.messages as { role: string; content: string }[],
+    stream: typeof b.stream === 'boolean' ? b.stream : undefined,
+  };
+}
 
 export default {
   async fetch(request: Request): Promise<Response> {
@@ -29,19 +47,14 @@ export default {
     }
 
     // Parse and validate request body
-    let body: ChatRequest;
+    let body: ValidatedRequest;
     try {
-      body = await request.json() as ChatRequest;
-    } catch {
-      return jsonResponse(400, { error: 'Invalid JSON body' }, requestId, startTime);
-    }
-
-    if (!body.apiKey || typeof body.apiKey !== 'string') {
-      return jsonResponse(400, { error: 'Missing or invalid API key' }, requestId, startTime);
-    }
-
-    if (!Array.isArray(body.messages) || body.messages.length === 0) {
-      return jsonResponse(400, { error: 'Messages array is required and must not be empty' }, requestId, startTime);
+      body = validateRequest(await request.json());
+    } catch (e) {
+      const err = e as { status?: number; message?: string };
+      const status = err.status ?? 400;
+      const message = err.message ?? 'Invalid JSON body';
+      return jsonResponse(status, { error: message }, requestId, startTime);
     }
 
     // Forward to DeepSeek API
