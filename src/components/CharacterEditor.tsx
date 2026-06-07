@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import Modal from './Modal';
 import Spinner from './Spinner';
 import { useCharacterStore } from '../stores/characterStore';
 import { useUIStore } from '../stores/uiStore';
@@ -120,8 +121,6 @@ export default function CharacterEditor() {
     );
   }, [form.personality, form.scenario, form.greeting, form.voiceHints, form.rules]);
 
-  if (!isOpen) return null;
-
   const handleSave = async () => {
     if (!form.name.trim() || !form.description.trim()) return;
 
@@ -201,15 +200,7 @@ export default function CharacterEditor() {
       : 'Save';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={closeEditor}>
-      <div
-        className="card w-full max-w-lg mx-4 p-6 max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="text-lg font-semibold mb-4">
-          {editingId ? 'Edit Character' : 'Create Custom Character'}
-        </h2>
-
+    <Modal open={isOpen} onClose={closeEditor} title={editingId ? 'Edit Character' : 'Create Custom Character'} maxWidth="max-w-lg">
         {error && (
           <div className="mb-3 p-2 bg-red-500/10 border border-red-500/20 rounded text-red-400 text-sm">
             {error}
@@ -263,7 +254,6 @@ export default function CharacterEditor() {
             </button>
           </div>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }

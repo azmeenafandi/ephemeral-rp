@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Modal from './Modal';
 import { useApiKeyStore } from '../stores/apiKeyStore';
 import { useUIStore } from '../stores/uiStore';
 
@@ -9,8 +10,6 @@ export default function SettingsModal() {
   const setApiKey = useApiKeyStore((s) => s.setApiKey);
   const clearApiKey = useApiKeyStore((s) => s.clearApiKey);
   const [inputValue, setInputValue] = useState('');
-
-  if (!isOpen) return null;
 
   const maskedKey = apiKey
     ? `${apiKey.slice(0, 4)}${'•'.repeat(Math.max(0, apiKey.length - 8))}${apiKey.slice(-4)}`
@@ -24,17 +23,8 @@ export default function SettingsModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={closeSettings}>
-      <div
-        className="card w-full max-w-md mx-4 p-6"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold">Settings</h2>
-          <button onClick={closeSettings} className="btn-ghost text-sm">✕</button>
-        </div>
-
-        {/* API Key Section */}
+    <Modal open={isOpen} onClose={closeSettings} title="Settings">
+      {/* API Key Section */}
         <section className="mb-6">
           <h3 className="text-sm font-medium text-slate-300 mb-2">DeepSeek API Key</h3>
           <p className="text-xs text-slate-500 mb-3">
@@ -102,7 +92,6 @@ export default function SettingsModal() {
             <p>Powered by DeepSeek API · Deployed on Cloudflare</p>
           </div>
         </section>
-      </div>
-    </div>
+    </Modal>
   );
 }
