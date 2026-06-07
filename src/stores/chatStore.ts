@@ -5,6 +5,7 @@ import type { Character } from '../types/character';
 import { v4 as uuidv4 } from '../utils/uuid';
 import { trimMessages } from '../utils/contextManager';
 import { API_BASE_URL } from '../config';
+import { useUIStore } from './uiStore';
 import { useCharacterStore } from './characterStore';
 
 interface ChatState {
@@ -12,8 +13,6 @@ interface ChatState {
   isStreaming: boolean;
   streamingContent: string;
   error: string | null;
-  editingMessageId: string | null;
-  editingContent: string | null;
   oocInstructions: string[];
   chatCharacterId: string | null;
   sendMessage: (content: string, apiKey: string, systemPrompt: string) => Promise<void>;
@@ -21,8 +20,79 @@ interface ChatState {
   startNewChat: (greeting?: string) => void;
   importMessages: (messages: Message[]) => void;
   getExportData: () => SessionExport;
-  startEditing: (messageId: string) => void;
-  cancelEditing: () => void;
+}
+
+function buildApiPayload(
+  content: string,
+  systemPrompt: string,
+  baseMessages: Message[],
+  oocInstructions: string[],
+): { role: string; content: string }[] {
+  const effectiveSystemPrompt = oocInstructions.length > 0
+    ? `${systemPrompt}\n\n[OUT OF CHARACTER — Follow these ongoing instructions: ${oocInstructions.join('; ')}]`
+    : systemPrompt;
+
+  const userMessage: Message = {
+    id: uuidv4(),
+    role: 'user',
+    content,
+    timestamp: Date.now(),
+  };
+
+  const apiMessages: Message[] = [
+    { id: uuidv4(), role: 'system' as const, content: effectiveSystemPrompt, timestamp: Date.now() },
+    ...baseMessages.filter((m) => !(m.role === 'user' && (m as Message & { occ?: boolean }).occ)),
+    userMessage,
+  ];
+
+  const trimmed = trimMessages(apiMessages);
+  return trimmed.map((m) => ({ role: m.role, content: m.content }));
+}
+
+async function streamAssistantResponse(
+  response: Response,
+  onChunk: (fullContent: string) => void,
+): Promise<string> {
+  const reader = response.body?.getReader();
+  if (!reader) throw new Error('No response body');
+
+  const decoder = new TextDecoder();
+  let fullContent = '';
+  let remainder = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    const chunk = remainder + decoder.decode(value, { stream: true });
+    const lines = chunk.split('\n');
+    remainder = lines.pop() || '';
+
+    for (const line of lines) {
+      if (line.startsWith('data: ')) {
+        const data = line.slice(6);
+        if (data === '[DONE]') continue;
+        try {
+          const parsed = JSON.parse(data);
+          const delta = parsed.choices?.[0]?.delta?.content;
+          if (delta) {
+            fullContent += delta;
+            onChunk(fullContent);
+          }
+        } catch { /* skip malformed SSE chunks */ }
+      }
+    }
+  }
+
+  return fullContent;
+}
+
+function formatErrorMessage(err: unknown): string {
+  return err instanceof DOMException && err.name === 'AbortError'
+    ? 'Request timed out — the AI took too long to respond. Please try again.'
+    : err instanceof Error
+      ? err.message
+      : 'An error occurred';
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -30,8 +100,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
   isStreaming: false,
   streamingContent: '',
   error: null,
-  editingMessageId: null,
-  editingContent: null,
   oocInstructions: [],
   chatCharacterId: null,
 
@@ -51,7 +119,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   sendMessage: async (content, apiKey, systemPrompt) => {
-    const { editingMessageId, oocInstructions, chatCharacterId } = get();
+    const { oocInstructions, chatCharacterId } = get();
+    const { editingMessageId } = useUIStore.getState();
 
     // If chatCharacterId is not yet set (e.g. imported chat), capture it now
     if (!chatCharacterId) {
@@ -87,10 +156,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
         isStreaming: false,
         streamingContent: '',
         error: null,
-        editingMessageId: null,
-        editingContent: null,
         oocInstructions: [...get().oocInstructions, strippedContent],
       });
+      useUIStore.getState().cancelEditing();
       return;
     }
 
@@ -101,23 +169,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       timestamp: Date.now(),
     };
 
-    // Build system prompt with OOC instructions if any
-    let effectiveSystemPrompt = systemPrompt;
-    if (oocInstructions.length > 0) {
-      effectiveSystemPrompt = `${systemPrompt}\n\n[OUT OF CHARACTER — Follow these ongoing instructions: ${oocInstructions.join('; ')}]`;
-    }
-
-    // Build API messages: system prompt (with OOC directives), then base messages (filtering OOC user messages), then current user
-    const apiMessages: Message[] = [
-      { id: uuidv4(), role: 'system' as const, content: effectiveSystemPrompt, timestamp: Date.now() },
-      ...baseMessages.filter((m) => !(m.role === 'user' && (m as Message & { occ?: boolean }).occ)),
-      userMessage,
-    ];
-
-    // Apply context window management before sending
-    const trimmed = trimMessages(apiMessages);
-    const messages = trimmed.map((m) => ({ role: m.role, content: m.content }));
-
+    const apiPayload = buildApiPayload(content, systemPrompt, baseMessages, oocInstructions);
     const storeMessages = [...baseMessages, userMessage];
 
     set({
@@ -125,19 +177,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
       isStreaming: true,
       streamingContent: '',
       error: null,
-      editingMessageId: null,
-      editingContent: null,
     });
-
-    // Abort stuck requests after 2 minutes (connection stalled, DeepSeek timeout, etc.)
-    const STREAM_TIMEOUT_MS = 120_000;
+    useUIStore.getState().cancelEditing();
 
     try {
       const response = await fetch(`${API_BASE_URL}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ apiKey, messages }),
-        signal: AbortSignal.timeout(STREAM_TIMEOUT_MS),
+        body: JSON.stringify({ apiKey, messages: apiPayload }),
+        signal: AbortSignal.timeout(120_000),
       });
 
       if (!response.ok) {
@@ -145,38 +193,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
         throw new Error(err.error || `HTTP ${response.status}`);
       }
 
-      const reader = response.body?.getReader();
-      if (!reader) throw new Error('No response body');
-
-      const decoder = new TextDecoder();
-      let fullContent = '';
-      let remainder = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = remainder + decoder.decode(value, { stream: true });
-        const lines = chunk.split('\n');
-        remainder = lines.pop() || '';
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6);
-            if (data === '[DONE]') continue;
-            try {
-              const parsed = JSON.parse(data);
-              const delta = parsed.choices?.[0]?.delta?.content;
-              if (delta) {
-                fullContent += delta;
-                set({ streamingContent: fullContent });
-              }
-            } catch {
-              // skip malformed SSE chunks
-            }
-          }
-        }
-      }
+      const fullContent = await streamAssistantResponse(response, (fc) =>
+        set({ streamingContent: fc }),
+      );
 
       const assistantMessage: Message = {
         id: uuidv4(),
@@ -191,29 +210,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
         streamingContent: '',
       }));
     } catch (err) {
-      const message =
-        err instanceof DOMException && err.name === 'AbortError'
-          ? 'Request timed out — the AI took too long to respond. Please try again.'
-          : err instanceof Error
-            ? err.message
-            : 'An error occurred';
       set({
         isStreaming: false,
         streamingContent: '',
-        error: message,
+        error: formatErrorMessage(err),
       });
     }
   },
 
   clearChat: () => set({ messages: [], error: null, oocInstructions: [], chatCharacterId: null }),
-
-  startEditing: (messageId) => {
-    const msg = get().messages.find((m) => m.id === messageId);
-    if (!msg || msg.role !== 'user') return;
-    set({ editingMessageId: messageId, editingContent: msg.content });
-  },
-
-  cancelEditing: () => set({ editingMessageId: null, editingContent: null }),
 
   importMessages: (messages) => {
     const oocInstructions: string[] = [];

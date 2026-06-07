@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, type KeyboardEvent } from 'react';
 import Spinner from './Spinner';
 import { useChatStore } from '../stores/chatStore';
+import { useUIStore } from '../stores/uiStore';
 import { useCharacterStore } from '../stores/characterStore';
 import { useApiKeyStore } from '../stores/apiKeyStore';
 
@@ -8,9 +9,9 @@ export default function MessageComposer() {
   const [input, setInput] = useState('');
   const sendMessage = useChatStore((s) => s.sendMessage);
   const isStreaming = useChatStore((s) => s.isStreaming);
-  const editingMessageId = useChatStore((s) => s.editingMessageId);
-  const editingContent = useChatStore((s) => s.editingContent);
-  const cancelEditing = useChatStore((s) => s.cancelEditing);
+  const editingMessageId = useUIStore((s) => s.editingMessageId);
+  const editingContent = useUIStore((s) => s.editingContent);
+  const cancelEditing = useUIStore((s) => s.cancelEditing);
   const getSystemPrompt = useCharacterStore((s) => s.getSystemPrompt);
   const apiKey = useApiKeyStore((s) => s.apiKey);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
