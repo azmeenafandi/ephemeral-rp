@@ -50,7 +50,7 @@ describe('sessionIO', () => {
 
     it('rejects non-object JSON', async () => {
       const file = new File(['"just a string"'], 'session.json', { type: 'application/json' });
-      await expect(importSession(file)).rejects.toThrow('not a JSON object');
+      await expect(importSession(file)).rejects.toThrow('Session: not an object');
     });
 
     it('rejects missing version', async () => {
@@ -71,7 +71,7 @@ describe('sessionIO', () => {
       const data = makeExport();
       delete (data.character as any).personality;
       const file = new File([JSON.stringify(data)], 'session.json', { type: 'application/json' });
-      await expect(importSession(file)).rejects.toThrow('character missing required fields');
+      await expect(importSession(file)).rejects.toThrow('Character: personality must be string');
     });
 
     it('rejects non-array messages', async () => {
@@ -109,7 +109,7 @@ describe('sessionIO', () => {
         messages: [{ id: 'bad', role: 'INVALID', content: 'x', timestamp: 1 }],
       };
       const file = new File([JSON.stringify(data)], 'session.json', { type: 'application/json' });
-      await expect(importSession(file)).rejects.toThrow('malformed message');
+      await expect(importSession(file)).rejects.toThrow('Message[0]: role must be one of "system", "user", "assistant"');
     });
 
     it('roundtrips correctly', async () => {

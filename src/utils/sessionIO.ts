@@ -1,6 +1,7 @@
 import type { SessionExport } from '../types/session';
 import type { Character } from '../types/character';
 import type { Message } from '../types/message';
+import { validateShape } from './validate';
 
 export function exportSession(data: SessionExport): void {
   const json = JSON.stringify(data, null, 2);
@@ -33,46 +34,35 @@ export async function importSession(
     throw new Error('Invalid file: not valid JSON');
   }
 
-  if (!data || typeof data !== 'object') {
-    throw new Error('Invalid session file: not a JSON object');
-  }
+  const obj = validateShape(
+    data,
+    { version: 'number', character: 'object', messages: 'array' },
+    'Session',
+  );
 
-  const obj = data as Record<string, unknown>;
+  const char = validateShape(
+    obj.character,
+    {
+      id: 'string',
+      name: 'string',
+      personality: 'string',
+      systemPrompt: 'string',
+      greeting: 'string',
+    },
+    'Character',
+  );
 
-  if (typeof obj.version !== 'number' || obj.version < 1) {
-    throw new Error('Invalid session file: missing or invalid version');
-  }
-
-  if (!obj.character || typeof obj.character !== 'object') {
-    throw new Error('Invalid session file: missing character data');
-  }
-
-  if (!Array.isArray(obj.messages)) {
-    throw new Error('Invalid session file: messages must be an array');
-  }
-
-  const char = obj.character as Record<string, unknown>;
-  if (
-    typeof char.id !== 'string' ||
-    typeof char.name !== 'string' ||
-    typeof char.personality !== 'string' ||
-    typeof char.systemPrompt !== 'string' ||
-    typeof char.greeting !== 'string'
-  ) {
-    throw new Error('Invalid session file: character missing required fields');
-  }
-
-  for (const msg of obj.messages) {
-    if (
-      typeof msg !== 'object' ||
-      !msg ||
-      typeof (msg as Record<string, unknown>).id !== 'string' ||
-      !['system', 'user', 'assistant'].includes((msg as Record<string, unknown>).role as string) ||
-      typeof (msg as Record<string, unknown>).content !== 'string' ||
-      typeof (msg as Record<string, unknown>).timestamp !== 'number'
-    ) {
-      throw new Error('Invalid session file: malformed message entry');
-    }
+  for (const [i, msg] of (obj.messages as unknown[]).entries()) {
+    validateShape(
+      msg,
+      {
+        id: 'string',
+        role: { type: 'string', oneOf: ['system', 'user', 'assistant'] },
+        content: 'string',
+        timestamp: 'number',
+      },
+      `Message[${i}]`,
+    );
   }
 
   return {
