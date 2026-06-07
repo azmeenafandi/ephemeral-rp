@@ -4,6 +4,12 @@ interface ChatRequest {
   stream?: boolean;
 }
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
 export default {
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
@@ -13,11 +19,7 @@ export default {
     // CORS preflight
     if (request.method === 'OPTIONS') {
       return new Response(null, {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
-        },
+        headers: CORS_HEADERS,
       });
     }
 
@@ -73,10 +75,10 @@ export default {
 
       return new Response(deepseekResponse.body, {
         headers: {
+          ...CORS_HEADERS,
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
           'Connection': 'keep-alive',
-          'Access-Control-Allow-Origin': '*',
         },
       });
     } catch (err) {
@@ -92,9 +94,6 @@ function jsonResponse(status: number, body: object, requestId: string, startTime
 
   return new Response(JSON.stringify(body), {
     status,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-    },
+    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
   });
 }
