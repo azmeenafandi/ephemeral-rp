@@ -1,9 +1,7 @@
 import { useRef, useEffect } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeSanitize from 'rehype-sanitize';
 import { useChatStore } from '../stores/chatStore';
 import StreamingMessage from './StreamingMessage';
+import MarkdownContent from './MarkdownContent';
 
 export default function MessageList() {
   const messages = useChatStore((s) => s.messages);
@@ -50,11 +48,7 @@ export default function MessageList() {
             <div
               className={`max-w-[85%] sm:max-w-[80%] rounded-xl px-4 py-3 ${bubbleStyle(msg.role, msg.occ)}`}
             >
-              <div className="prose prose-sm prose-invert max-w-none text-sm leading-relaxed">
-                <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize]}>
-                  {msg.content}
-                </ReactMarkdown>
-              </div>
+              <MarkdownContent content={msg.content} />
               <div className="flex items-center justify-between mt-1.5">
                 <p className="text-xs text-slate-500">{formatTime(msg.timestamp)}</p>
                 {msg.role === 'user' && !isStreaming && !editingMessageId && (
