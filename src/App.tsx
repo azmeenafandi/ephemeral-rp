@@ -4,6 +4,7 @@ import ChatArea from './components/ChatArea';
 import SettingsModal from './components/SettingsModal';
 import CharacterEditor from './components/CharacterEditor';
 import AboutModal from './components/AboutModal';
+import OocModal from './components/OocModal';
 import { useUIStore } from './stores/uiStore';
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
       <SettingsModal />
       <CharacterEditor />
       <AboutModal />
+      <OocModal />
     </div>
   );
 }
