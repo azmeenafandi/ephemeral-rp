@@ -29,7 +29,7 @@ export default function Sidebar() {
       const result = await importSession(file);
       if (result) {
         selectCharacter(result.character.id);
-        importMessages(result.messages);
+        importMessages(result.messages, result.oocInstructions);
         toggleSidebar();
       }
     } catch (err) {
