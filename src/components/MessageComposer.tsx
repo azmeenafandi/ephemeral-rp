@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, type KeyboardEvent } from 'react';
 import Spinner from './Spinner';
+import { parseSlashCommand } from '../utils/slashCommands';
 import { useChatStore } from '../stores/chatStore';
 import { useUIStore } from '../stores/uiStore';
 import { useCharacterStore } from '../stores/characterStore';
@@ -40,6 +41,20 @@ export default function MessageComposer() {
   const handleSend = () => {
     const trimmed = input.trim();
     if (!trimmed || isStreaming || !apiKey) return;
+
+    const cmd = parseSlashCommand(trimmed);
+    if (cmd) {
+      if (cmd.type === 'ooc-add') {
+        useChatStore.getState().addOocInstruction(cmd.text);
+        setInput('');
+        textareaRef.current?.focus();
+      } else if (cmd.type === 'ooc-panel') {
+        useUIStore.getState().openOocPanel();
+        setInput('');
+      }
+      return;
+    }
+
     setInput('');
     sendMessage(trimmed, apiKey, getSystemPrompt());
     textareaRef.current?.focus();
