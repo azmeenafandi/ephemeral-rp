@@ -21,7 +21,7 @@ const mockMessages: Message[] = [
 ];
 
 function makeExport(): SessionExport {
-  return { version: '1.0.0', appVersion: '1.0.0', exportedAt: new Date().toISOString(), character: mockCharacter, messages: mockMessages };
+  return { version: '1.1.0', appVersion: '1.0.0', exportedAt: new Date().toISOString(), character: mockCharacter, messages: mockMessages, oocInstructions: [] };
 }
 
 describe('sessionIO', () => {
@@ -76,9 +76,10 @@ describe('sessionIO', () => {
 
     it('rejects non-array messages', async () => {
       const data = {
-        version: '1.0.0',
+        version: '1.1.0',
         appVersion: '1.0.0',
         exportedAt: '2026-01-01T00:00:00Z',
+        oocInstructions: [],
         character: {
           id: 'test-char-1',
           name: 'Test Mage',
@@ -96,9 +97,10 @@ describe('sessionIO', () => {
 
     it('rejects malformed message entries', async () => {
       const data = {
-        version: '1.0.0',
+        version: '1.1.0',
         appVersion: '1.0.0',
         exportedAt: '2026-01-01T00:00:00Z',
+        oocInstructions: [],
         character: {
           id: 'test-char-1',
           name: 'Test Mage',
@@ -116,9 +118,10 @@ describe('sessionIO', () => {
 
     it('roundtrips correctly', async () => {
       const data = {
-        version: '1.0.0',
+        version: '1.1.0',
         appVersion: '1.0.0',
         exportedAt: '2026-01-01T00:00:00Z',
+        oocInstructions: [],
         character: {
           id: 'test-char-1',
           name: 'Test Mage',
@@ -140,6 +143,26 @@ describe('sessionIO', () => {
       expect(result.character.personality).toBe('Testy');
       expect(result.messages).toHaveLength(3);
       expect(result.messages[0].content).toBe('You are a test mage.');
+    });
+
+    it('reconstructs OOC instructions from legacy occ:true messages', async () => {
+      const legacyChar = { id: 'c1', name: 'Test', description: '', personality: '', scenario: '', systemPrompt: '', greeting: 'Hi' };
+      const legacySession = {
+        version: '1.0.0',
+        appVersion: '1.0.0',
+        character: legacyChar,
+        messages: [
+          { id: 'm1', role: 'user', content: 'OOC: be verbose', timestamp: 1000, occ: true },
+          { id: 'm2', role: 'user', content: 'Hello', timestamp: 2000 },
+          { id: 'm3', role: 'assistant', content: 'Hi there!', timestamp: 3000 },
+        ],
+      };
+      const blob = new Blob([JSON.stringify(legacySession)], { type: 'application/json' });
+      const file = new File([blob], 'legacy.json', { type: 'application/json' });
+      const result = await importSession(file);
+      expect(result.oocInstructions).toEqual(['be verbose']);
+      expect(result.messages).toHaveLength(2); // occ:true message stripped
+      expect(result.messages[0].content).toBe('Hello');
     });
   });
 });
