@@ -54,7 +54,7 @@ describe('chatStore', () => {
       ],
     });
     const data = useChatStore.getState().getExportData();
-    expect(data.version).toBe('1.0.0');
+    expect(data.version).toBe('1.1.0');
     expect(data.messages).toHaveLength(1);
     expect(data.exportedAt).toBeTruthy();
     // No chatCharacterId set, so fallback character is used
@@ -74,7 +74,7 @@ describe('chatStore', () => {
       customCharacters: [],
     });
     const data = useChatStore.getState().getExportData();
-    expect(data.version).toBe('1.0.0');
+    expect(data.version).toBe('1.1.0');
     expect(data.character.id).toBe('test-char');
     expect(data.messages).toHaveLength(1);
   });

@@ -20,7 +20,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
 export async function importSession(
   file: File,
-): Promise<{ character: Character; messages: Message[] }> {
+): Promise<{ character: Character; messages: Message[]; oocInstructions: string[] }> {
   if (file.size > MAX_FILE_SIZE) {
     throw new Error('File too large — maximum size is 5 MB');
   }
@@ -71,8 +71,27 @@ export async function importSession(
     );
   }
 
+  // Extract OOC instructions based on format version
+  let oocInstructions: string[] = [];
+  let messages = obj.messages as Message[];
+
+  if (formatVersion >= '1.1.0') {
+    // New format: dedicated field
+    oocInstructions = (obj.oocInstructions as string[]) ?? [];
+  } else {
+    // Legacy format (1.0.0): reconstruct from occ:true messages
+    messages = messages.filter((m: Message) => {
+      const isOoc = (m as Message & { occ?: boolean }).occ;
+      if (isOoc) {
+        oocInstructions.push(m.content.replace(/^OOC:\s*/i, ''));
+      }
+      return !isOoc;
+    });
+  }
+
   return {
     character: char as unknown as Character,
-    messages: obj.messages as Message[],
+    messages,
+    oocInstructions,
   };
 }
