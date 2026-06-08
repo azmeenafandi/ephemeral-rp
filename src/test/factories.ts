@@ -28,7 +28,7 @@ export function makeMessage(overrides?: Partial<Message>): Message {
 
 export function makeSession(overrides?: Partial<SessionExport>): SessionExport {
   return {
-    version: 1,
+    version: '1.0.0',
     appVersion: '1.0.0',
     exportedAt: '2026-01-01T00:00:00.000Z',
     character: makeCharacter(),
