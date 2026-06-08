@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Modal from './Modal';
 import { useApiKeyStore } from '../stores/apiKeyStore';
 import { useUIStore } from '../stores/uiStore';
+import { APP_VERSION } from '../config';
 
 export default function SettingsModal() {
   const isOpen = useUIStore((s) => s.settingsModalOpen);
@@ -84,7 +85,7 @@ export default function SettingsModal() {
         <section>
           <h3 className="text-sm font-medium text-slate-300 mb-2">About</h3>
           <div className="text-xs text-slate-500 space-y-1">
-            <p>Private AI Roleplay v{import.meta.env.VITE_APP_VERSION}</p>
+            <p>Private AI Roleplay v{APP_VERSION}</p>
             <p className="flex items-center gap-1">
               <span className="text-emerald-400">🔒</span>
               Your data never leaves your browser. No server-side storage. No logging of conversations.

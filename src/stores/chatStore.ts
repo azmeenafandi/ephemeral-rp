@@ -4,7 +4,7 @@ import type { SessionExport } from '../types/session';
 import type { Character } from '../types/character';
 import { v4 as uuidv4 } from '../utils/uuid';
 import { trimMessages } from '../utils/contextManager';
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, APP_VERSION } from '../config';
 import { useUIStore } from './uiStore';
 import { useCharacterStore } from './characterStore';
 
@@ -254,7 +254,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     return {
       version: 1,
-      appVersion: import.meta.env.VITE_APP_VERSION,
+      appVersion: APP_VERSION,
       exportedAt: new Date().toISOString(),
       character: character ?? { id: 'unknown', name: 'Unknown', description: '', personality: '', scenario: '', systemPrompt: '', greeting: '' },
       messages: get().messages,
