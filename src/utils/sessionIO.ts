@@ -36,13 +36,14 @@ export async function importSession(
 
   const obj = validateShape(
     data,
-    { version: 'number', appVersion: 'string', character: 'object', messages: 'array' },
+    { version: 'string', appVersion: 'string', character: 'object', messages: 'array' },
     'Session',
   );
 
-  // Validate minimum format version
-  if ((obj.version as number) < 1) {
-    throw new Error('Invalid session file: unsupported version');
+  // Legacy exports used integer version — normalize to semver string
+  const formatVersion = typeof obj.version === 'number' ? '1.0.0' : obj.version;
+  if (typeof formatVersion !== 'string' || !formatVersion.match(/^\d+\.\d+\.\d+$/)) {
+    throw new Error('Invalid session file: unsupported version format');
   }
 
   const char = validateShape(
