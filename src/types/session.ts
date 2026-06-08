@@ -7,4 +7,5 @@ export interface SessionExport {
   exportedAt: string;
   character: Character;
   messages: Message[];
+  oocInstructions?: string[];
 }
