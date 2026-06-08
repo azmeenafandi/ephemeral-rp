@@ -254,6 +254,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     return {
       version: 1,
+      appVersion: import.meta.env.VITE_APP_VERSION,
       exportedAt: new Date().toISOString(),
       character: character ?? { id: 'unknown', name: 'Unknown', description: '', personality: '', scenario: '', systemPrompt: '', greeting: '' },
       messages: get().messages,

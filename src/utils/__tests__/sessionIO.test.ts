@@ -21,7 +21,7 @@ const mockMessages: Message[] = [
 ];
 
 function makeExport(): SessionExport {
-  return { version: 1, exportedAt: new Date().toISOString(), character: mockCharacter, messages: mockMessages };
+  return { version: 1, appVersion: '1.0.0', exportedAt: new Date().toISOString(), character: mockCharacter, messages: mockMessages };
 }
 
 describe('sessionIO', () => {
@@ -77,6 +77,7 @@ describe('sessionIO', () => {
     it('rejects non-array messages', async () => {
       const data = {
         version: 1,
+        appVersion: '1.0.0',
         exportedAt: '2026-01-01T00:00:00Z',
         character: {
           id: 'test-char-1',
@@ -96,6 +97,7 @@ describe('sessionIO', () => {
     it('rejects malformed message entries', async () => {
       const data = {
         version: 1,
+        appVersion: '1.0.0',
         exportedAt: '2026-01-01T00:00:00Z',
         character: {
           id: 'test-char-1',
@@ -115,6 +117,7 @@ describe('sessionIO', () => {
     it('roundtrips correctly', async () => {
       const data = {
         version: 1,
+        appVersion: '1.0.0',
         exportedAt: '2026-01-01T00:00:00Z',
         character: {
           id: 'test-char-1',

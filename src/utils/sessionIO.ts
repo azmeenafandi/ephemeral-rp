@@ -36,9 +36,14 @@ export async function importSession(
 
   const obj = validateShape(
     data,
-    { version: 'number', character: 'object', messages: 'array' },
+    { version: 'number', appVersion: 'string', character: 'object', messages: 'array' },
     'Session',
   );
+
+  // Validate minimum format version
+  if ((obj.version as number) < 1) {
+    throw new Error('Invalid session file: unsupported version');
+  }
 
   const char = validateShape(
     obj.character,
