@@ -9,6 +9,9 @@ interface UIState {
   editingCharacterId: string | null;
   editingMessageId: string | null;
   editingContent: string | null;
+  oocPanelOpen: boolean;
+  openOocPanel: () => void;
+  closeOocPanel: () => void;
   toggleSidebar: () => void;
   openSettings: () => void;
   closeSettings: () => void;
@@ -21,6 +24,7 @@ interface UIState {
 }
 
 export const useUIStore = create<UIState>((set) => ({
+  oocPanelOpen: false,
   sidebarOpen: true,
   settingsModalOpen: false,
   characterEditorOpen: false,
@@ -28,6 +32,8 @@ export const useUIStore = create<UIState>((set) => ({
   editingCharacterId: null,
   editingMessageId: null,
   editingContent: null,
+  openOocPanel: () => set({ oocPanelOpen: true }),
+  closeOocPanel: () => set({ oocPanelOpen: false }),
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
   openSettings: () => set({ settingsModalOpen: true }),
   closeSettings: () => set({ settingsModalOpen: false }),
