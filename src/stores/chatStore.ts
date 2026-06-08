@@ -14,11 +14,13 @@ interface ChatState {
   streamingContent: string;
   error: string | null;
   oocInstructions: string[];
+  addOocInstruction: (text: string) => void;
+  removeOocInstruction: (index: number) => void;
   chatCharacterId: string | null;
   sendMessage: (content: string, apiKey: string, systemPrompt: string) => Promise<void>;
   clearChat: () => void;
   startNewChat: (greeting?: string) => void;
-  importMessages: (messages: Message[]) => void;
+  importMessages: (messages: Message[], oocInstructions?: string[]) => void;
   getExportData: () => SessionExport;
 }
 
@@ -101,6 +103,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
   streamingContent: '',
   error: null,
   oocInstructions: [],
+  addOocInstruction: (text) =>
+    set((state) => ({
+      oocInstructions: [...state.oocInstructions, text],
+    })),
+  removeOocInstruction: (index) =>
+    set((state) => ({
+      oocInstructions: state.oocInstructions.filter((_, i) => i !== index),
+    })),
   chatCharacterId: null,
 
   startNewChat: (greeting) => {
@@ -137,29 +147,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
       if (editIndex !== -1) {
         baseMessages = baseMessages.slice(0, editIndex);
       }
-    }
-
-    const isOOC = /^OOC:\s*/i.test(content);
-
-    // Handle OOC: store instruction, add amber bubble, no API call
-    if (isOOC) {
-      const strippedContent = content.replace(/^OOC:\s*/i, '');
-      const userMessage: Message = {
-        id: uuidv4(),
-        role: 'user',
-        content,
-        timestamp: Date.now(),
-        occ: true,
-      };
-      set({
-        messages: [...baseMessages, userMessage],
-        isStreaming: false,
-        streamingContent: '',
-        error: null,
-        oocInstructions: [...get().oocInstructions, strippedContent],
-      });
-      useUIStore.getState().cancelEditing();
-      return;
     }
 
     const userMessage: Message = {
@@ -220,14 +207,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   clearChat: () => set({ messages: [], error: null, oocInstructions: [], chatCharacterId: null }),
 
-  importMessages: (messages) => {
-    const oocInstructions: string[] = [];
-    for (const msg of messages) {
-      if (msg.role === 'user' && (msg as Message & { occ?: boolean }).occ) {
-        const stripped = msg.content.replace(/^OOC:\s*/i, '');
-        oocInstructions.push(stripped);
+  importMessages: (messages, oocInstructions?) => {
+    const instructions = oocInstructions ?? (() => {
+      const result: string[] = [];
+      for (const msg of messages) {
+        if (msg.role === 'user' && (msg as Message & { occ?: boolean }).occ) {
+          result.push(msg.content.replace(/^OOC:\s*/i, ''));
+        }
       }
-    }
+      return result;
+    })();
 
     // Try to detect the character from imported system messages
     const charStore = useCharacterStore.getState();
@@ -243,11 +232,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }
     }
 
-    set({ messages, error: null, oocInstructions, chatCharacterId });
+    set({ messages, error: null, oocInstructions: instructions, chatCharacterId });
   },
 
   getExportData: () => {
-    const { chatCharacterId } = get();
+    const { chatCharacterId, oocInstructions } = get();
     const charStore = useCharacterStore.getState();
     const allChars = [...charStore.builtInCharacters, ...charStore.customCharacters];
     const character = allChars.find((c) => c.id === chatCharacterId);
@@ -257,7 +246,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
       appVersion: APP_VERSION,
       exportedAt: new Date().toISOString(),
       character: character ?? { id: 'unknown', name: 'Unknown', description: '', personality: '', scenario: '', systemPrompt: '', greeting: '' },
-      messages: get().messages,
+      messages: get().messages.filter((m) => !(m as Message & { occ?: boolean }).occ),
+      oocInstructions,
     };
   },
 }));
