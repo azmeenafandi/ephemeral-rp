@@ -1,3 +1,7 @@
+import { checkRateLimit } from './rateLimiter';
+
+import { withRetry, CircuitBreaker } from './resilience';
+
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -72,6 +76,8 @@ async function proxyToDeepSeek(
   return deepseekResponse;
 }
 
+const deepseekCircuit = new CircuitBreaker({ failureThreshold: 3, openTimeoutMs: 30_000 });
+
 export default {
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
@@ -90,6 +96,15 @@ export default {
       return jsonResponse(HttpStatus.METHOD_NOT_ALLOWED, { error: 'Method not allowed. Use POST /api/chat' }, requestId, startTime);
     }
 
+    // Rate limit by IP
+    const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+    if (!checkRateLimit(ip)) {
+      return new Response(JSON.stringify({ error: 'Too many requests — please wait a moment' }), {
+        status: 429,
+        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json', 'Retry-After': '60' },
+      });
+    }
+
     // Parse and validate request body
     let body: ValidatedRequest;
     try {
@@ -103,7 +118,13 @@ export default {
 
     // Forward to DeepSeek API
     try {
-      const deepseekResponse = await proxyToDeepSeek(body.apiKey, body.messages, body.stream !== false);
+      if (deepseekCircuit.isOpen) {
+        return jsonResponse(503, { error: 'AI service temporarily unavailable — please try again in a few seconds' }, requestId, startTime);
+      }
+      const deepseekResponse = await withRetry(
+        () => proxyToDeepSeek(body.apiKey, body.messages, body.stream !== false),
+      );
+      deepseekCircuit.recordSuccess();
 
       return new Response(deepseekResponse.body, {
         headers: {
@@ -114,6 +135,7 @@ export default {
         },
       });
     } catch (err) {
+      deepseekCircuit.recordFailure();
       const e = err as { status?: number; message?: string };
       const message = e?.message || (err instanceof Error ? err.message : 'Internal error');
       console.error(`Worker: request ${requestId} failed`, err);

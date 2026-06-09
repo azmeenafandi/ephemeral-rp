@@ -111,7 +111,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ apiKey, messages: apiPayload }),
-        signal: AbortSignal.timeout(120_000),
+        // 180s = 3 min to allow for Worker retries (up to 3 × 60s + overhead)
+        signal: AbortSignal.timeout(180_000),
       });
 
       if (!response.ok) {
