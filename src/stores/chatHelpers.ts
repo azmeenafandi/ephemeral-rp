@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from '../utils/uuid';
+import { AuthError } from '../utils/errors';
 import { trimMessages } from '../utils/contextManager';
 import type { Message } from '../types/message';
 import type { Character } from '../types/character';
@@ -64,7 +65,9 @@ export async function streamAssistantResponse(
             fullContent += delta;
             onChunk(fullContent);
           }
-        } catch { /* skip malformed SSE chunks */ }
+        } catch {
+          console.warn('SSE: malformed chunk skipped');
+        }
       }
     }
   }
@@ -76,7 +79,14 @@ export function formatErrorMessage(err: unknown, fallback = 'An error occurred')
   if (err instanceof DOMException && err.name === 'AbortError') {
     return 'Request timed out — the AI took too long to respond. Please try again.';
   }
-  return err instanceof Error ? err.message : fallback;
+  if (err instanceof Error) {
+    const msg = err.message.toLowerCase();
+    if (msg.includes('invalid api key') || msg.includes('unauthorized') || msg.includes('401')) {
+      return 'API key rejected — please check your key in Settings.';
+    }
+    return err.message;
+  }
+  return fallback;
 }
 
 export function reconstructOocInstructions(messages: Message[]): string[] {

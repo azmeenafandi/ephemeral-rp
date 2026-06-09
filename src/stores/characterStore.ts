@@ -84,4 +84,7 @@ loadBuiltInCharacters().then((chars) => {
     selectedCharacter: chars[0] ?? null,
     isLoading: false,
   });
+}).catch((err) => {
+  console.error('Failed to load built-in characters:', err);
+  useCharacterStore.setState({ isLoading: false });
 });
