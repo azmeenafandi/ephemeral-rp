@@ -4,7 +4,7 @@ import type { SessionExport } from '../types/session';
 import { v4 as uuidv4 } from '../utils/uuid';
 import { API_BASE_URL, APP_VERSION, SESSION_FORMAT_VERSION } from '../config';
 import { useCharacterStore } from './characterStore';
-import { buildApiPayload, streamAssistantResponse, formatErrorMessage, reconstructOocInstructions, detectCharacterFromMessages } from '../utils/chatHelpers';
+import { buildApiPayload, streamAssistantResponse, formatErrorMessage, reconstructOocInstructions, detectCharacterFromMessages, isOocMessage } from '../utils/chatHelpers';
 
 interface ChatState {
   messages: Message[];
@@ -167,7 +167,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       appVersion: APP_VERSION,
       exportedAt: new Date().toISOString(),
       character: character ?? { id: 'unknown', name: 'Unknown', description: '', personality: '', scenario: '', systemPrompt: '', greeting: '' },
-      messages: get().messages.filter((m) => !(m as Message & { occ?: boolean }).occ),
+      messages: get().messages.filter((m) => !isOocMessage(m)),
       oocInstructions,
     };
   },

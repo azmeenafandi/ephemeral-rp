@@ -3,6 +3,10 @@ import { trimMessages } from './contextManager';
 import type { Message } from '../types/message';
 import type { Character } from '../types/character';
 
+export function isOocMessage(msg: Message): boolean {
+  return msg.role === 'user' && !!(msg as Message & { occ?: boolean }).occ;
+}
+
 export function buildApiPayload(
   content: string,
   systemPrompt: string,
@@ -22,7 +26,7 @@ export function buildApiPayload(
 
   const apiMessages: Message[] = [
     { id: uuidv4(), role: 'system' as const, content: effectiveSystemPrompt, timestamp: Date.now() },
-    ...baseMessages.filter((m) => !(m.role === 'user' && (m as Message & { occ?: boolean }).occ)),
+    ...baseMessages.filter((m) => !isOocMessage(m)),
     userMessage,
   ];
 
@@ -79,7 +83,7 @@ export function formatErrorMessage(err: unknown): string {
 export function reconstructOocInstructions(messages: Message[]): string[] {
   const result: string[] = [];
   for (const msg of messages) {
-    if (msg.role === 'user' && (msg as Message & { occ?: boolean }).occ) {
+    if (isOocMessage(msg)) {
       result.push(msg.content.replace(/^OOC:\s*/i, ''));
     }
   }
