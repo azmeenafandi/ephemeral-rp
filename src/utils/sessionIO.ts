@@ -18,6 +18,37 @@ export function exportSession(data: SessionExport): void {
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
+function resolveFormatVersion(obj: Record<string, unknown>): string {
+  const version = typeof obj.version === 'number' ? '1.0.0' : obj.version;
+  if (typeof version !== 'string' || !version.match(/^\d+\.\d+\.\d+$/)) {
+    throw new Error('Invalid session file: unsupported version format');
+  }
+  return version;
+}
+
+function extractOocInstructions(
+  obj: Record<string, unknown>,
+  formatVersion: string,
+  messages: Message[],
+): { oocInstructions: string[]; messages: Message[] } {
+  if (formatVersion >= '1.1.0') {
+    return {
+      oocInstructions: (obj.oocInstructions as string[]) ?? [],
+      messages,
+    };
+  }
+  // Legacy format (1.0.0): reconstruct from occ:true messages
+  const oocInstructions: string[] = [];
+  const filtered = messages.filter((m) => {
+    const isOoc = (m as Message & { occ?: boolean }).occ;
+    if (isOoc) {
+      oocInstructions.push(m.content.replace(/^OOC:\s*/i, ''));
+    }
+    return !isOoc;
+  });
+  return { oocInstructions, messages: filtered };
+}
+
 export async function importSession(
   file: File,
 ): Promise<{ character: Character; messages: Message[]; oocInstructions: string[] }> {
@@ -40,11 +71,7 @@ export async function importSession(
     'Session',
   );
 
-  // Legacy exports used integer version — normalize to semver string
-  const formatVersion = typeof obj.version === 'number' ? '1.0.0' : obj.version;
-  if (typeof formatVersion !== 'string' || !formatVersion.match(/^\d+\.\d+\.\d+$/)) {
-    throw new Error('Invalid session file: unsupported version format');
-  }
+  const formatVersion = resolveFormatVersion(obj);
 
   const char = validateShape(
     obj.character,
@@ -71,27 +98,11 @@ export async function importSession(
     );
   }
 
-  // Extract OOC instructions based on format version
-  let oocInstructions: string[] = [];
-  let messages = obj.messages as Message[];
-
-  if (formatVersion >= '1.1.0') {
-    // New format: dedicated field
-    oocInstructions = (obj.oocInstructions as string[]) ?? [];
-  } else {
-    // Legacy format (1.0.0): reconstruct from occ:true messages
-    messages = messages.filter((m: Message) => {
-      const isOoc = (m as Message & { occ?: boolean }).occ;
-      if (isOoc) {
-        oocInstructions.push(m.content.replace(/^OOC:\s*/i, ''));
-      }
-      return !isOoc;
-    });
-  }
+  const { oocInstructions, messages: filteredMessages } = extractOocInstructions(obj, formatVersion, obj.messages as Message[]);
 
   return {
     character: char as unknown as Character,
-    messages,
+    messages: filteredMessages,
     oocInstructions,
   };
 }
