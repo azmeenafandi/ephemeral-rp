@@ -150,8 +150,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const instructions = oocInstructions ?? reconstructOocInstructions(messages);
 
     // Try to detect the character from imported system messages
-    const charStore = useCharacterStore.getState();
-    const allChars = [...charStore.builtInCharacters, ...charStore.customCharacters];
+    const allChars = [...useCharacterStore.getState().builtInCharacters, ...useCharacterStore.getState().customCharacters];
     const chatCharacterId = detectCharacterFromMessages(messages, allChars);
 
     set({ messages, error: null, oocInstructions: instructions, chatCharacterId });
@@ -159,9 +158,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   getExportData: () => {
     const { chatCharacterId, oocInstructions } = get();
-    const charStore = useCharacterStore.getState();
-    const allChars = [...charStore.builtInCharacters, ...charStore.customCharacters];
-    const character = allChars.find((c) => c.id === chatCharacterId);
+    const character = chatCharacterId ? useCharacterStore.getState().getCharacterById(chatCharacterId) : null;
 
     return {
       version: SESSION_FORMAT_VERSION,

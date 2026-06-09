@@ -13,6 +13,7 @@ interface CharacterState {
   editCharacter: (id: string, updates: Partial<Character>) => void;
   deleteCharacter: (id: string) => void;
   getSystemPrompt: () => string;
+  getCharacterById: (id: string) => Character | null;
 }
 
 export const useCharacterStore = create<CharacterState>((set, get) => ({
@@ -68,6 +69,11 @@ export const useCharacterStore = create<CharacterState>((set, get) => ({
     const char = get().selectedCharacter;
     if (!char) return '';
     return char.systemPrompt;
+  },
+
+  getCharacterById: (id) => {
+    const { builtInCharacters, customCharacters } = get();
+    return [...builtInCharacters, ...customCharacters].find((c) => c.id === id) ?? null;
   },
 }));
 
