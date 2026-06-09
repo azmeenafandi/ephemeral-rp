@@ -1,6 +1,5 @@
 import { useRef, useEffect } from 'react';
 import { useChatStore } from '../stores/chatStore';
-import { useUIStore } from '../stores/uiStore';
 import StreamingMessage from './StreamingMessage';
 import MarkdownContent from './MarkdownContent';
 
@@ -8,8 +7,8 @@ export default function MessageList() {
   const messages = useChatStore((s) => s.messages);
   const isStreaming = useChatStore((s) => s.isStreaming);
   const streamingContent = useChatStore((s) => s.streamingContent);
-  const editingMessageId = useUIStore((s) => s.editingMessageId);
-  const startEditing = useUIStore((s) => s.startEditing);
+  const editingMessageId = useChatStore((s) => s.editingMessageId);
+  const startEditing = useChatStore((s) => s.startEditing);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { useChatStore } from './chatStore';
 
 interface UIState {
   sidebarOpen: boolean;
@@ -7,8 +6,6 @@ interface UIState {
   characterEditorOpen: boolean;
   aboutModalOpen: boolean;
   editingCharacterId: string | null;
-  editingMessageId: string | null;
-  editingContent: string | null;
   oocPanelOpen: boolean;
   openOocPanel: () => void;
   closeOocPanel: () => void;
@@ -19,8 +16,6 @@ interface UIState {
   closeCharacterEditor: () => void;
   openAbout: () => void;
   closeAbout: () => void;
-  startEditing: (messageId: string) => void;
-  cancelEditing: () => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -30,8 +25,6 @@ export const useUIStore = create<UIState>((set) => ({
   characterEditorOpen: false,
   aboutModalOpen: false,
   editingCharacterId: null,
-  editingMessageId: null,
-  editingContent: null,
   openOocPanel: () => set({ oocPanelOpen: true }),
   closeOocPanel: () => set({ oocPanelOpen: false }),
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
@@ -43,11 +36,4 @@ export const useUIStore = create<UIState>((set) => ({
     set({ characterEditorOpen: false, editingCharacterId: null }),
   openAbout: () => set({ aboutModalOpen: true }),
   closeAbout: () => set({ aboutModalOpen: false }),
-  startEditing: (messageId) => {
-    const messages = useChatStore.getState().messages;
-    const msg = messages.find((m) => m.id === messageId);
-    if (!msg || msg.role !== 'user') return;
-    set({ editingMessageId: messageId, editingContent: msg.content });
-  },
-  cancelEditing: () => set({ editingMessageId: null, editingContent: null }),
 }));

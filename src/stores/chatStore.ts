@@ -5,7 +5,6 @@ import type { Character } from '../types/character';
 import { v4 as uuidv4 } from '../utils/uuid';
 import { trimMessages } from '../utils/contextManager';
 import { API_BASE_URL, APP_VERSION, SESSION_FORMAT_VERSION } from '../config';
-import { useUIStore } from './uiStore';
 import { useCharacterStore } from './characterStore';
 
 interface ChatState {
@@ -17,6 +16,10 @@ interface ChatState {
   addOocInstruction: (text: string) => void;
   removeOocInstruction: (index: number) => void;
   chatCharacterId: string | null;
+  editingMessageId: string | null;
+  editingContent: string | null;
+  startEditing: (messageId: string) => void;
+  cancelEditing: () => void;
   sendMessage: (content: string, apiKey: string, systemPrompt: string) => Promise<void>;
   clearChat: () => void;
   startNewChat: (greeting?: string) => void;
@@ -99,6 +102,8 @@ function formatErrorMessage(err: unknown): string {
 
 export const useChatStore = create<ChatState>((set, get) => ({
   messages: [],
+  editingMessageId: null,
+  editingContent: null,
   isStreaming: false,
   streamingContent: '',
   error: null,
@@ -113,6 +118,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
     })),
   chatCharacterId: null,
 
+  startEditing: (messageId) => {
+    const msg = get().messages.find((m) => m.id === messageId);
+    if (!msg || msg.role !== 'user') return;
+    set({ editingMessageId: messageId, editingContent: msg.content });
+  },
+  cancelEditing: () => set({ editingMessageId: null, editingContent: null }),
+
   startNewChat: (greeting) => {
     const char = useCharacterStore.getState().selectedCharacter;
     if (greeting) {
@@ -122,15 +134,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
         content: greeting,
         timestamp: Date.now(),
       };
-      set({ messages: [msg], error: null, isStreaming: false, streamingContent: '', oocInstructions: [], chatCharacterId: char?.id ?? null });
+      set({ messages: [msg], error: null, isStreaming: false, streamingContent: '', oocInstructions: [], chatCharacterId: char?.id ?? null, editingMessageId: null, editingContent: null });
     } else {
-      set({ messages: [], error: null, isStreaming: false, streamingContent: '', oocInstructions: [], chatCharacterId: char?.id ?? null });
+      set({ messages: [], error: null, isStreaming: false, streamingContent: '', oocInstructions: [], chatCharacterId: char?.id ?? null, editingMessageId: null, editingContent: null });
     }
   },
 
   sendMessage: async (content, apiKey, systemPrompt) => {
-    const { oocInstructions, chatCharacterId } = get();
-    const { editingMessageId } = useUIStore.getState();
+    const { oocInstructions, chatCharacterId, editingMessageId } = get();
 
     // If chatCharacterId is not yet set (e.g. imported chat), capture it now
     if (!chatCharacterId) {
@@ -164,8 +175,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
       isStreaming: true,
       streamingContent: '',
       error: null,
+      editingMessageId: null,
+      editingContent: null,
     });
-    useUIStore.getState().cancelEditing();
 
     try {
       const response = await fetch(`${API_BASE_URL}/chat`, {
