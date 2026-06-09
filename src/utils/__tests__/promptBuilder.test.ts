@@ -39,4 +39,16 @@ describe('promptBuilder', () => {
     const ruleLines = prompt.split('\n').filter((l) => /^\d\./.test(l));
     expect(ruleLines).toHaveLength(5);
   });
+
+  it('includes CRITICAL VOICE INSTRUCTIONS when voiceHints present', () => {
+    const prompt = buildSystemPrompt(mockChar, ['Speak in haiku', 'Never use the letter e']);
+    expect(prompt).toContain('CRITICAL VOICE INSTRUCTIONS');
+    expect(prompt).toContain('Speak in haiku');
+  });
+
+  it('uses customRules over defaultRules', () => {
+    const prompt = buildSystemPrompt(mockChar, undefined, ['Custom rule only']);
+    expect(prompt).toContain('Custom rule only');
+    expect(prompt).not.toContain('Always remain in character');
+  });
 });

@@ -76,5 +76,23 @@ describe('contextManager', () => {
       const trimmed = trimMessages([]);
       expect(trimmed).toEqual([]);
     });
+
+    it('returns empty array for empty messages', () => {
+      expect(trimMessages([])).toEqual([]);
+    });
+
+    it('preserves system message alone', () => {
+      const result = trimMessages([{ id: 's', role: 'system', content: 'You are helpful.', timestamp: 0 }]);
+      expect(result).toHaveLength(1);
+      expect(result[0].role).toBe('system');
+    });
+
+    it('handles no system message', () => {
+      const msgs = Array.from({ length: 5 }, (_, i) => ({
+        id: `m${i}`, role: 'user' as const, content: 'hello', timestamp: i,
+      }));
+      const result = trimMessages(msgs);
+      expect(result.length).toBeGreaterThan(0);
+    });
   });
 });
