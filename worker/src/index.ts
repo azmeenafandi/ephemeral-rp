@@ -4,6 +4,14 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
+const HttpStatus = {
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  METHOD_NOT_ALLOWED: 405,
+  RATE_LIMITED: 429,
+  BAD_GATEWAY: 502,
+} as const;
+
 interface ValidatedRequest {
   apiKey: string;
   messages: { role: string; content: string }[];
@@ -12,14 +20,14 @@ interface ValidatedRequest {
 
 function validateRequest(body: unknown): ValidatedRequest {
   if (!body || typeof body !== 'object') {
-    throw { status: 400, message: 'Invalid JSON body' };
+    throw { status: HttpStatus.BAD_REQUEST, message: 'Invalid JSON body' };
   }
   const b = body as Record<string, unknown>;
   if (!b.apiKey || typeof b.apiKey !== 'string') {
-    throw { status: 400, message: 'Missing or invalid API key' };
+    throw { status: HttpStatus.BAD_REQUEST, message: 'Missing or invalid API key' };
   }
   if (!Array.isArray(b.messages) || b.messages.length === 0) {
-    throw { status: 400, message: 'Messages array is required and must not be empty' };
+    throw { status: HttpStatus.BAD_REQUEST, message: 'Messages array is required and must not be empty' };
   }
   return {
     apiKey: b.apiKey as string,
@@ -50,14 +58,14 @@ async function proxyToDeepSeek(
   if (!deepseekResponse.ok) {
     const errBody = await deepseekResponse.json().catch(() => ({})) as { error?: { message?: string } };
     const message = errBody?.error?.message || `DeepSeek API error: ${deepseekResponse.status}`;
-    const status = deepseekResponse.status === 401 ? 401
-      : deepseekResponse.status === 429 ? 429
-      : 502;
+    const status = deepseekResponse.status === HttpStatus.UNAUTHORIZED ? HttpStatus.UNAUTHORIZED
+      : deepseekResponse.status === HttpStatus.RATE_LIMITED ? HttpStatus.RATE_LIMITED
+      : HttpStatus.BAD_GATEWAY;
     throw { status, message };
   }
 
   if (!deepseekResponse.body) {
-    throw { status: 502, message: 'No response body from DeepSeek' };
+    throw { status: HttpStatus.BAD_GATEWAY, message: 'No response body from DeepSeek' };
   }
 
   return deepseekResponse;
@@ -78,7 +86,7 @@ export default {
 
     // Only POST /api/chat
     if (url.pathname !== '/api/chat' || request.method !== 'POST') {
-      return jsonResponse(405, { error: 'Method not allowed. Use POST /api/chat' }, requestId, startTime);
+      return jsonResponse(HttpStatus.METHOD_NOT_ALLOWED, { error: 'Method not allowed. Use POST /api/chat' }, requestId, startTime);
     }
 
     // Parse and validate request body
@@ -87,7 +95,7 @@ export default {
       body = validateRequest(await request.json());
     } catch (e) {
       const err = e as { status?: number; message?: string };
-      const status = err.status ?? 400;
+      const status = err.status ?? HttpStatus.BAD_REQUEST;
       const message = err.message ?? 'Invalid JSON body';
       return jsonResponse(status, { error: message }, requestId, startTime);
     }
@@ -107,7 +115,7 @@ export default {
     } catch (err) {
       const e = err as { status?: number; message?: string };
       const message = e?.message || (err instanceof Error ? err.message : 'Internal error');
-      return jsonResponse(e?.status || 502, { error: message }, requestId, startTime);
+      return jsonResponse(e?.status || HttpStatus.BAD_GATEWAY, { error: message }, requestId, startTime);
     }
   },
 };
