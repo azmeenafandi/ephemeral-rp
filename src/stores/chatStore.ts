@@ -1,11 +1,10 @@
 import { create } from 'zustand';
 import type { Message } from '../types/message';
 import type { SessionExport } from '../types/session';
-import type { Character } from '../types/character';
 import { v4 as uuidv4 } from '../utils/uuid';
-import { trimMessages } from '../utils/contextManager';
 import { API_BASE_URL, APP_VERSION, SESSION_FORMAT_VERSION } from '../config';
 import { useCharacterStore } from './characterStore';
+import { buildApiPayload, streamAssistantResponse, formatErrorMessage, reconstructOocInstructions, detectCharacterFromMessages } from '../utils/chatHelpers';
 
 interface ChatState {
   messages: Message[];
@@ -25,79 +24,6 @@ interface ChatState {
   startNewChat: (greeting?: string) => void;
   importMessages: (messages: Message[], oocInstructions?: string[]) => void;
   getExportData: () => SessionExport;
-}
-
-function buildApiPayload(
-  content: string,
-  systemPrompt: string,
-  baseMessages: Message[],
-  oocInstructions: string[],
-): { role: string; content: string }[] {
-  const effectiveSystemPrompt = oocInstructions.length > 0
-    ? `${systemPrompt}\n\n[OUT OF CHARACTER — Follow these ongoing instructions: ${oocInstructions.join('; ')}]`
-    : systemPrompt;
-
-  const userMessage: Message = {
-    id: uuidv4(),
-    role: 'user',
-    content,
-    timestamp: Date.now(),
-  };
-
-  const apiMessages: Message[] = [
-    { id: uuidv4(), role: 'system' as const, content: effectiveSystemPrompt, timestamp: Date.now() },
-    ...baseMessages.filter((m) => !(m.role === 'user' && (m as Message & { occ?: boolean }).occ)),
-    userMessage,
-  ];
-
-  const trimmed = trimMessages(apiMessages);
-  return trimmed.map((m) => ({ role: m.role, content: m.content }));
-}
-
-async function streamAssistantResponse(
-  response: Response,
-  onChunk: (fullContent: string) => void,
-): Promise<string> {
-  const reader = response.body?.getReader();
-  if (!reader) throw new Error('No response body');
-
-  const decoder = new TextDecoder();
-  let fullContent = '';
-  let remainder = '';
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-
-    const chunk = remainder + decoder.decode(value, { stream: true });
-    const lines = chunk.split('\n');
-    remainder = lines.pop() || '';
-
-    for (const line of lines) {
-      if (line.startsWith('data: ')) {
-        const data = line.slice(6);
-        if (data === '[DONE]') continue;
-        try {
-          const parsed = JSON.parse(data);
-          const delta = parsed.choices?.[0]?.delta?.content;
-          if (delta) {
-            fullContent += delta;
-            onChunk(fullContent);
-          }
-        } catch { /* skip malformed SSE chunks */ }
-      }
-    }
-  }
-
-  return fullContent;
-}
-
-function formatErrorMessage(err: unknown): string {
-  return err instanceof DOMException && err.name === 'AbortError'
-    ? 'Request timed out — the AI took too long to respond. Please try again.'
-    : err instanceof Error
-      ? err.message
-      : 'An error occurred';
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -220,29 +146,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
   clearChat: () => set({ messages: [], error: null, oocInstructions: [], chatCharacterId: null }),
 
   importMessages: (messages, oocInstructions?) => {
-    const instructions = oocInstructions ?? (() => {
-      const result: string[] = [];
-      for (const msg of messages) {
-        if (msg.role === 'user' && (msg as Message & { occ?: boolean }).occ) {
-          result.push(msg.content.replace(/^OOC:\s*/i, ''));
-        }
-      }
-      return result;
-    })();
+    const instructions = oocInstructions ?? reconstructOocInstructions(messages);
 
     // Try to detect the character from imported system messages
     const charStore = useCharacterStore.getState();
     const allChars = [...charStore.builtInCharacters, ...charStore.customCharacters];
-    let chatCharacterId: string | null = null;
-    for (const msg of messages) {
-      if (msg.role === 'system') {
-        const match = allChars.find((c) => c.systemPrompt === msg.content);
-        if (match) {
-          chatCharacterId = match.id;
-          break;
-        }
-      }
-    }
+    const chatCharacterId = detectCharacterFromMessages(messages, allChars);
 
     set({ messages, error: null, oocInstructions: instructions, chatCharacterId });
   },

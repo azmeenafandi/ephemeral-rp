@@ -1,0 +1,97 @@
+import { v4 as uuidv4 } from './uuid';
+import { trimMessages } from './contextManager';
+import type { Message } from '../types/message';
+import type { Character } from '../types/character';
+
+export function buildApiPayload(
+  content: string,
+  systemPrompt: string,
+  baseMessages: Message[],
+  oocInstructions: string[],
+): { role: string; content: string }[] {
+  const effectiveSystemPrompt = oocInstructions.length > 0
+    ? `${systemPrompt}\n\n[OUT OF CHARACTER — Follow these ongoing instructions: ${oocInstructions.join('; ')}]`
+    : systemPrompt;
+
+  const userMessage: Message = {
+    id: uuidv4(),
+    role: 'user',
+    content,
+    timestamp: Date.now(),
+  };
+
+  const apiMessages: Message[] = [
+    { id: uuidv4(), role: 'system' as const, content: effectiveSystemPrompt, timestamp: Date.now() },
+    ...baseMessages.filter((m) => !(m.role === 'user' && (m as Message & { occ?: boolean }).occ)),
+    userMessage,
+  ];
+
+  const trimmed = trimMessages(apiMessages);
+  return trimmed.map((m) => ({ role: m.role, content: m.content }));
+}
+
+export async function streamAssistantResponse(
+  response: Response,
+  onChunk: (fullContent: string) => void,
+): Promise<string> {
+  const reader = response.body?.getReader();
+  if (!reader) throw new Error('No response body');
+
+  const decoder = new TextDecoder();
+  let fullContent = '';
+  let remainder = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    const chunk = remainder + decoder.decode(value, { stream: true });
+    const lines = chunk.split('\n');
+    remainder = lines.pop() || '';
+
+    for (const line of lines) {
+      if (line.startsWith('data: ')) {
+        const data = line.slice(6);
+        if (data === '[DONE]') continue;
+        try {
+          const parsed = JSON.parse(data);
+          const delta = parsed.choices?.[0]?.delta?.content;
+          if (delta) {
+            fullContent += delta;
+            onChunk(fullContent);
+          }
+        } catch { /* skip malformed SSE chunks */ }
+      }
+    }
+  }
+
+  return fullContent;
+}
+
+export function formatErrorMessage(err: unknown): string {
+  return err instanceof DOMException && err.name === 'AbortError'
+    ? 'Request timed out — the AI took too long to respond. Please try again.'
+    : err instanceof Error
+      ? err.message
+      : 'An error occurred';
+}
+
+export function reconstructOocInstructions(messages: Message[]): string[] {
+  const result: string[] = [];
+  for (const msg of messages) {
+    if (msg.role === 'user' && (msg as Message & { occ?: boolean }).occ) {
+      result.push(msg.content.replace(/^OOC:\s*/i, ''));
+    }
+  }
+  return result;
+}
+
+export function detectCharacterFromMessages(messages: Message[], allChars: Character[]): string | null {
+  for (const msg of messages) {
+    if (msg.role === 'system') {
+      const match = allChars.find((c) => c.systemPrompt === msg.content);
+      if (match) return match.id;
+    }
+  }
+  return null;
+}
