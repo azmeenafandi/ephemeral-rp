@@ -2,6 +2,7 @@ import type { SessionExport } from '../types/session';
 import type { Character } from '../types/character';
 import type { Message } from '../types/message';
 import { validateShape } from './validate';
+import { MESSAGE_ROLES } from '../types/message';
 
 export function exportSession(data: SessionExport): void {
   const json = JSON.stringify(data, null, 2);
@@ -90,7 +91,7 @@ export async function importSession(
       msg,
       {
         id: 'string',
-        role: { type: 'string', oneOf: ['system', 'user', 'assistant'] },
+        role: { type: 'string', oneOf: MESSAGE_ROLES },
         content: 'string',
         timestamp: 'number',
       },

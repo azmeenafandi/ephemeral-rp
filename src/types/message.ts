@@ -1,6 +1,9 @@
+export const MESSAGE_ROLES = ['system', 'user', 'assistant'] as const;
+export type MessageRole = (typeof MESSAGE_ROLES)[number];
+
 export interface Message {
   id: string;
-  role: 'system' | 'user' | 'assistant';
+  role: MessageRole;
   content: string;
   timestamp: number;
   occ?: boolean;
