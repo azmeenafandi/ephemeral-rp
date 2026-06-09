@@ -61,6 +61,7 @@ async function proxyToDeepSeek(
     const status = deepseekResponse.status === HttpStatus.UNAUTHORIZED ? HttpStatus.UNAUTHORIZED
       : deepseekResponse.status === HttpStatus.RATE_LIMITED ? HttpStatus.RATE_LIMITED
       : HttpStatus.BAD_GATEWAY;
+    console.error('Worker: upstream error', { status: deepseekResponse.status, body: errBody });
     throw { status, message };
   }
 
@@ -115,6 +116,7 @@ export default {
     } catch (err) {
       const e = err as { status?: number; message?: string };
       const message = e?.message || (err instanceof Error ? err.message : 'Internal error');
+      console.error(`Worker: request ${requestId} failed`, err);
       return jsonResponse(e?.status || HttpStatus.BAD_GATEWAY, { error: message }, requestId, startTime);
     }
   },
