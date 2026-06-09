@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Modal from './Modal';
 import Spinner from './Spinner';
+import ErrorBanner from './ErrorBanner';
 import { useCharacterStore } from '../stores/characterStore';
 import { useUIStore } from '../stores/uiStore';
 import { useApiKeyStore } from '../stores/apiKeyStore';
@@ -202,11 +203,7 @@ export default function CharacterEditor() {
 
   return (
     <Modal open={isOpen} onClose={closeEditor} title={editingId ? 'Edit Character' : 'Create Custom Character'} maxWidth="max-w-lg">
-        {error && (
-          <div className="mb-3 p-2 bg-red-500/10 border border-red-500/20 rounded text-red-400 text-sm">
-            {error}
-          </div>
-        )}
+        {error && <ErrorBanner message={error} variant="modal" />}
 
         <div className="space-y-3">
           <input placeholder="Name" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="input-field" />

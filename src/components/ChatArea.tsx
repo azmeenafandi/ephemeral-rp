@@ -1,6 +1,7 @@
 import MessageList from './MessageList';
 import MessageComposer from './MessageComposer';
 import EmptyState from './EmptyState';
+import ErrorBanner from './ErrorBanner';
 import { useChatStore } from '../stores/chatStore';
 
 export default function ChatArea() {
@@ -13,11 +14,7 @@ export default function ChatArea() {
       {hasMessages ? (
         <>
           <MessageList />
-          {error && (
-            <div className="px-4 py-2 mx-4 mb-2 bg-red-900/30 border border-red-800 rounded-lg text-red-400 text-sm">
-              {error}
-            </div>
-          )}
+          {error && <ErrorBanner message={error} />}
           <MessageComposer />
         </>
       ) : (
