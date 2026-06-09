@@ -28,6 +28,41 @@ function validateRequest(body: unknown): ValidatedRequest {
   };
 }
 
+async function proxyToDeepSeek(
+  apiKey: string,
+  messages: { role: string; content: string }[],
+  stream: boolean,
+): Promise<Response> {
+  const deepseekResponse = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: 'deepseek-v4-flash',
+      messages,
+      max_tokens: 8192,
+      stream,
+    }),
+  });
+
+  if (!deepseekResponse.ok) {
+    const errBody = await deepseekResponse.json().catch(() => ({})) as { error?: { message?: string } };
+    const message = errBody?.error?.message || `DeepSeek API error: ${deepseekResponse.status}`;
+    const status = deepseekResponse.status === 401 ? 401
+      : deepseekResponse.status === 429 ? 429
+      : 502;
+    throw { status, message };
+  }
+
+  if (!deepseekResponse.body) {
+    throw { status: 502, message: 'No response body from DeepSeek' };
+  }
+
+  return deepseekResponse;
+}
+
 export default {
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
@@ -59,32 +94,7 @@ export default {
 
     // Forward to DeepSeek API
     try {
-      const deepseekResponse = await fetch('https://api.deepseek.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${body.apiKey}`,
-        },
-        body: JSON.stringify({
-          model: 'deepseek-v4-flash',
-          messages: body.messages,
-          max_tokens: 8192,
-          stream: body.stream !== false,
-        }),
-      });
-
-      if (!deepseekResponse.ok) {
-        const errBody = await deepseekResponse.json().catch(() => ({})) as { error?: { message?: string } };
-        const message = errBody?.error?.message || `DeepSeek API error: ${deepseekResponse.status}`;
-        const status = deepseekResponse.status === 401 ? 401
-          : deepseekResponse.status === 429 ? 429
-          : 502;
-        return jsonResponse(status, { error: message }, requestId, startTime);
-      }
-
-      if (!deepseekResponse.body) {
-        return jsonResponse(502, { error: 'No response body from DeepSeek' }, requestId, startTime);
-      }
+      const deepseekResponse = await proxyToDeepSeek(body.apiKey, body.messages, body.stream !== false);
 
       return new Response(deepseekResponse.body, {
         headers: {
@@ -95,8 +105,9 @@ export default {
         },
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Internal error';
-      return jsonResponse(502, { error: message }, requestId, startTime);
+      const e = err as { status?: number; message?: string };
+      const message = e?.message || (err instanceof Error ? err.message : 'Internal error');
+      return jsonResponse(e?.status || 502, { error: message }, requestId, startTime);
     }
   },
 };
