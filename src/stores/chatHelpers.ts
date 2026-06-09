@@ -72,12 +72,11 @@ export async function streamAssistantResponse(
   return fullContent;
 }
 
-export function formatErrorMessage(err: unknown): string {
-  return err instanceof DOMException && err.name === 'AbortError'
-    ? 'Request timed out — the AI took too long to respond. Please try again.'
-    : err instanceof Error
-      ? err.message
-      : 'An error occurred';
+export function formatErrorMessage(err: unknown, fallback = 'An error occurred'): string {
+  if (err instanceof DOMException && err.name === 'AbortError') {
+    return 'Request timed out — the AI took too long to respond. Please try again.';
+  }
+  return err instanceof Error ? err.message : fallback;
 }
 
 export function reconstructOocInstructions(messages: Message[]): string[] {

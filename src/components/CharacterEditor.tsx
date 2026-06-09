@@ -7,6 +7,7 @@ import { useApiKeyStore } from '../stores/apiKeyStore';
 import { buildSystemPromptFromParts } from '../utils/promptBuilder';
 import { parseTemplate } from '../utils/templateParser';
 import { API_BASE_URL } from '../config';
+import { formatErrorMessage } from '../stores/chatHelpers';
 import type { Character } from '../types/character';
 
 const emptyChar = {
@@ -141,7 +142,7 @@ export default function CharacterEditor() {
         rules: prev.rules.length > 0 ? prev.rules : generated.rules || [],
       }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Auto-generation failed');
+      setError(formatErrorMessage(err, 'Auto-generation failed'));
     }
     setGenerating(false);
   };

@@ -3,6 +3,7 @@ import { useChatStore } from '../stores/chatStore';
 import { useUIStore } from '../stores/uiStore';
 import CharacterSelector from './CharacterSelector';
 import { exportSession, importSession } from '../utils/sessionIO';
+import { formatErrorMessage } from '../stores/chatHelpers';
 
 export default function Sidebar() {
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
@@ -33,7 +34,7 @@ export default function Sidebar() {
         toggleSidebar();
       }
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to import session');
+      alert(formatErrorMessage(err, 'Failed to import session'));
     }
     e.target.value = '';
   };
