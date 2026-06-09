@@ -7,6 +7,7 @@ interface CharacterState {
   builtInCharacters: Character[];
   customCharacters: Character[];
   selectedCharacter: Character | null;
+  isLoading: boolean;
   selectCharacter: (id: string) => void;
   createCharacter: (char: Omit<Character, 'id' | 'isBuiltIn'>) => void;
   editCharacter: (id: string, updates: Partial<Character>) => void;
@@ -18,6 +19,7 @@ export const useCharacterStore = create<CharacterState>((set, get) => ({
   builtInCharacters: [],
   customCharacters: [],
   selectedCharacter: null,
+  isLoading: true,
 
   selectCharacter: (id) => {
     const allChars = [...get().builtInCharacters, ...get().customCharacters];
@@ -74,5 +76,6 @@ loadBuiltInCharacters().then((chars) => {
   useCharacterStore.setState({
     builtInCharacters: chars,
     selectedCharacter: chars[0] ?? null,
+    isLoading: false,
   });
 });
