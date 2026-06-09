@@ -13,7 +13,9 @@ export default function MessageComposer() {
   const editingMessageId = useChatStore((s) => s.editingMessageId);
   const editingContent = useChatStore((s) => s.editingContent);
   const cancelEditing = useChatStore((s) => s.cancelEditing);
+  const addOocInstruction = useChatStore((s) => s.addOocInstruction);
   const getSystemPrompt = useCharacterStore((s) => s.getSystemPrompt);
+  const openOocPanel = useUIStore((s) => s.openOocPanel);
   const apiKey = useApiKeyStore((s) => s.apiKey);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -45,11 +47,11 @@ export default function MessageComposer() {
     const cmd = parseSlashCommand(trimmed);
     if (cmd) {
       if (cmd.type === 'ooc-add') {
-        useChatStore.getState().addOocInstruction(cmd.text);
+        addOocInstruction(cmd.text);
         setInput('');
         textareaRef.current?.focus();
       } else if (cmd.type === 'ooc-panel') {
-        useUIStore.getState().openOocPanel();
+        openOocPanel();
         setInput('');
       }
       return;

@@ -85,6 +85,7 @@ export default function CharacterEditor() {
   const deleteCharacter = useCharacterStore((s) => s.deleteCharacter);
   const customCharacters = useCharacterStore((s) => s.customCharacters);
   const selectedCharacter = useCharacterStore((s) => s.selectedCharacter);
+  const apiKey = useApiKeyStore((s) => s.apiKey);
 
   const existingChar = editingId ? customCharacters.find((c) => c.id === editingId) : null;
   const [form, setForm] = useState(emptyChar);
@@ -125,7 +126,6 @@ export default function CharacterEditor() {
     setGenerating(true);
     setError(null);
     try {
-      const apiKey = useApiKeyStore.getState().apiKey;
       if (!apiKey) {
         setError('No API key configured. Please set your API key first.');
         setGenerating(false);
