@@ -4,7 +4,7 @@ import type { SessionExport } from '../types/session';
 import { v4 as uuidv4 } from '../utils/uuid';
 import { API_BASE_URL, APP_VERSION, SESSION_FORMAT_VERSION } from '../config';
 import { useCharacterStore } from './characterStore';
-import { buildApiPayload, streamAssistantResponse, formatErrorMessage, reconstructOocInstructions, detectCharacterFromMessages, isOocMessage } from '../utils/chatHelpers';
+import { buildApiPayload, streamAssistantResponse, formatErrorMessage, reconstructOocInstructions, detectCharacterFromMessages, isOocMessage } from './chatHelpers';
 
 interface ChatState {
   messages: Message[];

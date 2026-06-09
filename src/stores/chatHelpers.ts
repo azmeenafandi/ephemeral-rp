@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from './uuid';
-import { trimMessages } from './contextManager';
+import { v4 as uuidv4 } from '../utils/uuid';
+import { trimMessages } from '../utils/contextManager';
 import type { Message } from '../types/message';
 import type { Character } from '../types/character';
 
