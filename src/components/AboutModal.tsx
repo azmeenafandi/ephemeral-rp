@@ -31,13 +31,17 @@ export default function AboutModal() {
 
             {/* OOC */}
             <section>
-              <h3 className="text-slate-100 font-medium mb-1.5">🎭 Out Of Character (OOC)</h3>
+              <h3 className="text-slate-100 font-medium mb-1.5">🎭 Directing the AI</h3>
               <p>
                 Steer the AI's behavior mid-conversation by typing{' '}
-                <code className="text-amber-300 bg-amber-900/30 px-1 rounded">OOC: your instruction</code> as a message.
-                The directive is stored and quietly applied to all future responses in that session.
-                Examples: <em>"OOC: be more poetic"</em>, <em>"OOC: use shorter sentences"</em>.
-                Your OOC message appears in amber — no response is generated for it.
+                <code className="text-emerald-300 bg-emerald-900/30 px-1 rounded">/ooc your instruction</code> as a message.
+                The directive is stored and applied to all future responses in that session.
+                Examples: <em>"/ooc be more poetic"</em>, <em>"/ooc use shorter sentences"</em>.
+              </p>
+              <p className="mt-2">
+                Type{' '}
+                <code className="text-emerald-300 bg-emerald-900/30 px-1 rounded">/ooc</code> with no arguments
+                to open a panel where you can view and remove active directives.
               </p>
             </section>
 
