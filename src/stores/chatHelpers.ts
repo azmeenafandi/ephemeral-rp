@@ -15,7 +15,7 @@ export function buildApiPayload(
   oocInstructions: string[],
 ): { role: string; content: string }[] {
   const effectiveSystemPrompt = oocInstructions.length > 0
-    ? `${systemPrompt}\n\n[OUT OF CHARACTER — Follow these ongoing instructions: ${oocInstructions.join('; ')}]`
+    ? `${systemPrompt}\n\n[DIRECTIVE — Apply these user instructions WHILE remaining in character: ${oocInstructions.join('; ')}]`
     : systemPrompt;
 
   const userMessage: Message = {

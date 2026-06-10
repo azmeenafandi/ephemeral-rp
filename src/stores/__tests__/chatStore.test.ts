@@ -430,7 +430,7 @@ describe('chatStore', () => {
     await sendMessage('Hi', 'sk-test', systemPrompt);
     const fetchBody = JSON.parse(fetchSpy.mock.calls[0][1].body);
     const systemMsg = fetchBody.messages.find((m: { role: string }) => m.role === 'system');
-    expect(systemMsg.content).toContain('OUT OF CHARACTER');
+    expect(systemMsg.content).toContain('DIRECTIVE');
     expect(systemMsg.content).toContain('be concise');
   });
 
