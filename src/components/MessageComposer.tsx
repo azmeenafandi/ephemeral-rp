@@ -18,6 +18,15 @@ export default function MessageComposer() {
   const openOocPanel = useUIStore((s) => s.openOocPanel);
   const apiKey = useApiKeyStore((s) => s.apiKey);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [toast, setToast] = useState<string | null>(null);
+
+  // Auto-dismiss toast after 2 seconds
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   // Pre-fill input when editing a previous message
   useEffect(() => {
@@ -49,6 +58,7 @@ export default function MessageComposer() {
       if (cmd.type === 'ooc-add') {
         addOocInstruction(cmd.text);
         setInput('');
+        setToast('✓ Directive added');
         textareaRef.current?.focus();
       } else if (cmd.type === 'ooc-panel') {
         openOocPanel();
@@ -87,6 +97,11 @@ export default function MessageComposer() {
 
   return (
     <div className="p-4 border-t border-slate-800 bg-slate-900">
+      {toast && (
+        <div className="max-w-4xl mx-auto mb-2">
+          <span className="text-xs text-emerald-400">{toast}</span>
+        </div>
+      )}
       {editingMessageId && (
         <div className="max-w-4xl mx-auto mb-2 flex items-center gap-2">
           <span className="text-xs text-amber-400/80 italic">
