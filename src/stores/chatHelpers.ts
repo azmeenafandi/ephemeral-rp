@@ -74,15 +74,22 @@ export async function streamAssistantResponse(
   return fullContent;
 }
 
+import { AuthError, NetworkError, ValidationError } from '../utils/errors';
+
 export function formatErrorMessage(err: unknown, fallback = 'An error occurred'): string {
   if (err instanceof DOMException && err.name === 'AbortError') {
     return 'Request timed out — the AI took too long to respond. Please try again.';
   }
+  if (err instanceof AuthError) {
+    return err.userMessage ?? 'API key rejected — please check your key in Settings.';
+  }
+  if (err instanceof NetworkError) {
+    return err.userMessage ?? 'Network error. Please check your connection and try again.';
+  }
+  if (err instanceof ValidationError) {
+    return err.userMessage ?? err.message;
+  }
   if (err instanceof Error) {
-    const msg = err.message.toLowerCase();
-    if (msg.includes('invalid api key') || msg.includes('unauthorized') || msg.includes('401')) {
-      return 'API key rejected — please check your key in Settings.';
-    }
     return err.message;
   }
   return fallback;
