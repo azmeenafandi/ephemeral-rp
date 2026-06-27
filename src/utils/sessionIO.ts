@@ -2,6 +2,7 @@ import type { SessionExport } from '../types/session';
 import type { Character } from '../types/character';
 import type { Message } from '../types/message';
 import { validateShape } from './validate';
+import { ValidationError } from './errors';
 import { MESSAGE_ROLES } from '../types/message';
 
 export function exportSession(data: SessionExport): void {
@@ -54,7 +55,7 @@ export async function importSession(
   file: File,
 ): Promise<{ character: Character; messages: Message[]; oocInstructions: string[] }> {
   if (file.size > MAX_FILE_SIZE) {
-    throw new Error('File too large — maximum size is 5 MB');
+    throw new ValidationError('File too large — maximum size is 5 MB');
   }
 
   const text = await file.text();
@@ -63,7 +64,7 @@ export async function importSession(
   try {
     data = JSON.parse(text);
   } catch {
-    throw new Error('Invalid file: not valid JSON');
+    throw new ValidationError('Invalid file: not valid JSON');
   }
 
   const obj = validateShape(
