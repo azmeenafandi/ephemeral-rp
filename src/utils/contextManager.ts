@@ -29,10 +29,10 @@ export function trimMessages(messages: Message[]): Message[] {
   return result;
 }
 
-export function estimateTokens(text: string): number {
+function estimateTokens(text: string): number {
   return Math.ceil(text.length / CHARS_PER_TOKEN);
 }
 
-export function estimateTotalTokens(messages: Message[]): number {
+function estimateTotalTokens(messages: Message[]): number {
   return messages.reduce((sum, m) => sum + estimateTokens(m.content), 0);
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { trimMessages, estimateTokens, estimateTotalTokens } from '../contextManager';
+import { trimMessages } from '../contextManager';
 import type { Message } from '../../types/message';
 
 const systemMsg: Message = { id: 's', role: 'system' as const, content: 'You are helpful.', timestamp: 0 };
@@ -20,22 +20,6 @@ function makeLargeMessage(size: number): Message {
 }
 
 describe('contextManager', () => {
-  describe('estimateTokens', () => {
-    it('estimates ~1 token per 4 chars', () => {
-      expect(estimateTokens('abcd')).toBe(1);
-      expect(estimateTokens('abcde')).toBe(2);
-      expect(estimateTokens('')).toBe(0);
-    });
-  });
-
-  describe('estimateTotalTokens', () => {
-    it('sums estimates across messages', () => {
-      const msg: Message = { id: 'u1', role: 'user', content: 'Hello world!', timestamp: 1 };
-      const msgs = [systemMsg, msg];
-      const total = estimateTotalTokens(msgs);
-      expect(total).toBeGreaterThan(0);
-    });
-  });
 
   describe('trimMessages', () => {
     it('preserves the system prompt', () => {
