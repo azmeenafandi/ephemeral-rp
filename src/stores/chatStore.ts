@@ -6,6 +6,7 @@ import { API_BASE_URL, APP_VERSION, SESSION_FORMAT_VERSION } from '../config';
 import { useCharacterStore } from './characterStore';
 import { buildApiPayload, streamAssistantResponse, formatErrorMessage, reconstructOocInstructions, detectCharacterFromMessages } from './chatHelpers';
 import { isOocMessage } from '../utils/messageHelpers';
+import { AuthError } from '../utils/errors';
 
 interface ChatState {
   messages: Message[];
@@ -117,7 +118,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
       if (!response.ok) {
         const err = await response.json().catch(() => ({ error: 'Request failed' }));
-        throw new Error(err.error || `HTTP ${response.status}`);
+        const message = err.error || `HTTP ${response.status}`;
+        if (response.status === 401 || /invalid api key|unauthorized/i.test(message)) {
+          throw new AuthError(message);
+        }
+        throw new Error(message);
       }
 
       const fullContent = await streamAssistantResponse(response, (fc) =>
