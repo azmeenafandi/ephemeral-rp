@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Header from '../Header';
 import { useApiKeyStore } from '../../stores/apiKeyStore';
-import { useUIStore } from '../../stores/uiStore';
 
 describe('Header', () => {
   it('renders the app name', () => {

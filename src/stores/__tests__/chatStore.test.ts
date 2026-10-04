@@ -153,7 +153,6 @@ describe('chatStore', () => {
   });
 
   it('sendMessage updates streamingContent during stream', async () => {
-    let streamingValues: string[] = [];
     fetchSpy.mockImplementationOnce(async () => {
       return createOkResponse(['A', 'B']);
     });

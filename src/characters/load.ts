@@ -1,6 +1,6 @@
 import type { Character } from '../types/character';
 import { buildSystemPromptFromParts } from '../utils/promptBuilder';
-import { parseTemplate, type TemplateData } from '../utils/templateParser';
+import { parseTemplate } from '../utils/templateParser';
 
 // Import all template files at build time
 const templateModules = import.meta.glob('./templates/*.md', {
