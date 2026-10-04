@@ -12,7 +12,7 @@ describe('Header', () => {
 
   it('renders the model badge', () => {
     render(<Header onToggleSidebar={() => {}} />);
-    expect(screen.getByText('deepseek-v4-flash')).toBeDefined();
+    expect(screen.getByText('deepseek-flash')).toBeDefined();
   });
 
   it('shows "No API key" when no key is set', () => {

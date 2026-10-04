@@ -77,7 +77,7 @@ export default function SettingsModal() {
         <section className="mb-6">
           <h3 className="text-sm font-medium text-slate-300 mb-2">Model</h3>
           <div className="bg-slate-800 rounded-lg px-3 py-2 border border-slate-700">
-            <code className="text-sm text-slate-300">deepseek-v4-flash</code>
+            <code className="text-sm text-slate-300">deepseek-flash</code>
           </div>
         </section>
 
