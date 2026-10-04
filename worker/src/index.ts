@@ -52,7 +52,7 @@ async function proxyToDeepSeek(
       'Authorization': `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: 'deepseek-v4-flash',
+      model: 'deepseek-flash',
       messages,
       max_tokens: 8192,
       stream,
