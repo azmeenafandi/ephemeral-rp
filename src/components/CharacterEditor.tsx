@@ -98,6 +98,7 @@ export default function CharacterEditor() {
     if (existingChar) {
       // Try to recover voiceHints/rules from the existing systemPrompt
       // For legacy characters, these will be empty arrays
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- form is derived from the character being edited; syncing it when the editor opens preserves existing edit behaviour
       setForm({
         name: existingChar.name,
         description: existingChar.description,
