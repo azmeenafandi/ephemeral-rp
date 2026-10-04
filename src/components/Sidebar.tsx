@@ -10,7 +10,6 @@ export default function Sidebar() {
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
   const selectedCharacter = useCharacterStore((s) => s.selectedCharacter);
   const getExportData = useChatStore((s) => s.getExportData);
-  const clearChat = useChatStore((s) => s.clearChat);
   const startNewChat = useChatStore((s) => s.startNewChat);
   const importMessages = useChatStore((s) => s.importMessages);
   const selectCharacter = useCharacterStore((s) => s.selectCharacter);

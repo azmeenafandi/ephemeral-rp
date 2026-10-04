@@ -21,9 +21,13 @@ export default [
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      // tsc already catches undefined identifiers, so the base rule is redundant for TS
+      'no-undef': 'off',
+      // base rule can't parse TS interface params / constructor parameter properties
+      'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
   },
   prettier,
-  { ignores: ['dist', 'node_modules', '.a5c', '.pi', 'worker'] },
+  { ignores: ['dist', 'node_modules', '.a5c', '.pi', 'worker', 'vite.config.js', 'vite.config.d.ts'] },
 ];

@@ -31,6 +31,7 @@ export default function MessageComposer() {
   // Pre-fill input when editing a previous message
   useEffect(() => {
     if (editingContent !== null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- pre-fills the composer when message editing starts; deferred to a follow-up refactor
       setInput(editingContent);
     }
   }, [editingMessageId, editingContent]);
