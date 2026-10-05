@@ -7,7 +7,6 @@ on:
   push:
     branches: [main]
     paths-ignore:
-      - '.understand-anything/**'
       - 'README.md'
       - 'LICENSE'
       - 'CLOUDFLARE.md'
