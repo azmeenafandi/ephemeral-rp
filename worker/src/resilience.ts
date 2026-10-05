@@ -11,6 +11,15 @@ const DEFAULT_RETRY_CONFIG: Required<RetryConfig> = {
   retryableStatuses: new Set([502, 503, 504]),
 };
 
+// A failure is transient — and therefore worth counting toward the circuit
+// breaker — only when it is a server error (5xx) or a network error (no status).
+// Client errors (4xx) are permanent: retrying them or tripping the breaker on
+// them would turn a single bad request into a service-wide outage.
+export function isTransientError(err: unknown): boolean {
+  const status = (err as { status?: unknown }).status;
+  return typeof status !== 'number' || status >= 500;
+}
+
 export async function withRetry<T>(
   fn: () => Promise<T>,
   config?: RetryConfig,

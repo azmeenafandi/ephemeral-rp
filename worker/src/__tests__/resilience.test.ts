@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { withRetry, CircuitBreaker } from '../resilience';
+import { withRetry, CircuitBreaker, isTransientError } from '../resilience';
 
 describe('withRetry', () => {
   it('succeeds on first attempt', async () => {
@@ -27,6 +27,12 @@ describe('withRetry', () => {
     expect(fn).toHaveBeenCalledTimes(2);
   });
 
+  it('does not retry on 400 (non-retryable)', async () => {
+    const fn = vi.fn().mockRejectedValue({ status: 400 });
+    await expect(withRetry(fn, { baseDelayMs: 0 })).rejects.toEqual({ status: 400 });
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
+
   it('does not retry on 401 (non-retryable)', async () => {
     const fn = vi.fn().mockRejectedValue({ status: 401 });
     await expect(withRetry(fn, { baseDelayMs: 0 })).rejects.toEqual({ status: 401 });
@@ -52,6 +58,21 @@ describe('withRetry', () => {
     const result = await withRetry(fn, { baseDelayMs: 0 });
     expect(result).toBe('ok');
     expect(fn).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('isTransientError', () => {
+  it('treats 4xx client errors as non-transient', () => {
+    for (const status of [400, 401, 403, 404, 429]) {
+      expect(isTransientError({ status })).toBe(false);
+    }
+  });
+
+  it('treats 5xx and network errors (no status) as transient', () => {
+    for (const status of [500, 502, 503, 504]) {
+      expect(isTransientError({ status })).toBe(true);
+    }
+    expect(isTransientError(new Error('network down'))).toBe(true);
   });
 });
 

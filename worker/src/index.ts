@@ -1,6 +1,6 @@
 import { checkRateLimit } from './rateLimiter';
 
-import { withRetry, CircuitBreaker } from './resilience';
+import { withRetry, CircuitBreaker, isTransientError } from './resilience';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -62,8 +62,12 @@ async function proxyToDeepSeek(
   if (!deepseekResponse.ok) {
     const errBody = await deepseekResponse.json().catch(() => ({})) as { error?: { message?: string } };
     const message = errBody?.error?.message || `DeepSeek API error: ${deepseekResponse.status}`;
-    const status = deepseekResponse.status === HttpStatus.UNAUTHORIZED ? HttpStatus.UNAUTHORIZED
-      : deepseekResponse.status === HttpStatus.RATE_LIMITED ? HttpStatus.RATE_LIMITED
+    // Relay upstream client errors (4xx) verbatim — including 401 and 429 — so a
+    // permanent bad request is never misreported as a gateway failure (502) and
+    // never retried. Only upstream server errors collapse to 502.
+    const upstreamStatus = deepseekResponse.status;
+    const status = upstreamStatus >= 400 && upstreamStatus < 500
+      ? upstreamStatus
       : HttpStatus.BAD_GATEWAY;
     console.error('Worker: upstream error', { status: deepseekResponse.status, body: errBody });
     throw { status, message };
@@ -135,7 +139,11 @@ export default {
         },
       });
     } catch (err) {
-      deepseekCircuit.recordFailure();
+      // Only genuine transient failures may trip the breaker; a 4xx is permanent
+      // and must not count, or three bad requests would take the service down.
+      if (isTransientError(err)) {
+        deepseekCircuit.recordFailure();
+      }
       const e = err as { status?: number; message?: string };
       const message = e?.message || (err instanceof Error ? err.message : 'Internal error');
       console.error(`Worker: request ${requestId} failed`, err);
