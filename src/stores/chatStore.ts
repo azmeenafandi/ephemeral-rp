@@ -16,6 +16,7 @@ interface ChatState {
   oocInstructions: string[];
   addOocInstruction: (text: string) => void;
   removeOocInstruction: (index: number) => void;
+  clearOocInstructions: () => void;
   chatCharacterId: string | null;
   editingMessageId: string | null;
   editingContent: string | null;
@@ -44,6 +45,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     set((state) => ({
       oocInstructions: state.oocInstructions.filter((_, i) => i !== index),
     })),
+  clearOocInstructions: () => set({ oocInstructions: [] }),
   chatCharacterId: null,
 
   startEditing: (messageId) => {
@@ -62,9 +64,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
         content: greeting,
         timestamp: Date.now(),
       };
-      set({ messages: [msg], error: null, isStreaming: false, streamingContent: '', oocInstructions: [], chatCharacterId: char?.id ?? null, editingMessageId: null, editingContent: null });
+      set({ messages: [msg], error: null, isStreaming: false, streamingContent: '', chatCharacterId: char?.id ?? null, editingMessageId: null, editingContent: null });
     } else {
-      set({ messages: [], error: null, isStreaming: false, streamingContent: '', oocInstructions: [], chatCharacterId: char?.id ?? null, editingMessageId: null, editingContent: null });
+      set({ messages: [], error: null, isStreaming: false, streamingContent: '', chatCharacterId: char?.id ?? null, editingMessageId: null, editingContent: null });
     }
   },
 
