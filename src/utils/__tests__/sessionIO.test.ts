@@ -21,7 +21,18 @@ const mockMessages: Message[] = [
 ];
 
 function makeExport(): SessionExport {
-  return { version: '1.1.0', appVersion: '1.0.0', exportedAt: new Date().toISOString(), character: mockCharacter, messages: mockMessages, oocInstructions: [] };
+  // Return fresh copies so a test that mutates its session (e.g. `delete
+  // data.character.personality`) cannot corrupt the shared fixtures used by
+  // other tests. Without this, `--sequence.shuffle` reorders those tests and
+  // the mutation leaks into whichever test runs afterwards.
+  return {
+    version: '1.1.0',
+    appVersion: '1.0.0',
+    exportedAt: new Date().toISOString(),
+    character: { ...mockCharacter },
+    messages: mockMessages.map((message) => ({ ...message })),
+    oocInstructions: [],
+  };
 }
 
 describe('sessionIO', () => {
