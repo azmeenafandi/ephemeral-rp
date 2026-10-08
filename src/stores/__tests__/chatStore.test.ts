@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { useChatStore } from '../chatStore';
 import { useCharacterStore } from '../characterStore';
+import { TRUNCATION_NOTICE } from '../chatHelpers';
 
 const systemPrompt = 'You are a helpful assistant.';
 
@@ -31,6 +32,59 @@ function createErrorResponse(status: number, body: { error: string }): Response 
     headers: { 'Content-Type': 'application/json' },
   });
 }
+
+// Build an SSE response from raw wire chunks, so tests can include
+// `reasoning_content`, `finish_reason`, etc. without touching stored state.
+function createRawSSEResponse(chunks: object[]): Response {
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      for (const chunk of chunks) {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(chunk)}\n`));
+      }
+      controller.enqueue(encoder.encode('data: [DONE]\n'));
+      controller.close();
+    },
+  });
+  return new Response(stream, {
+    status: 200,
+    headers: { 'Content-Type': 'text/event-stream' },
+  });
+}
+
+// A stream the test pushes into by hand, so an intermediate (think-phase) state
+// can be observed before the response completes.
+function createManualSSEStream() {
+  const encoder = new TextEncoder();
+  let controller!: ReadableStreamDefaultController<Uint8Array>;
+  const stream = new ReadableStream<Uint8Array>({
+    start(c) {
+      controller = c;
+    },
+  });
+  return {
+    response: new Response(stream, {
+      status: 200,
+      headers: { 'Content-Type': 'text/event-stream' },
+    }),
+    push(obj: object) {
+      controller.enqueue(encoder.encode(`data: ${JSON.stringify(obj)}\n`));
+    },
+    finish(reason: string) {
+      controller.enqueue(
+        encoder.encode(
+          `data: ${JSON.stringify({ choices: [{ delta: {}, finish_reason: reason }] })}\n`,
+        ),
+      );
+      controller.enqueue(encoder.encode('data: [DONE]\n'));
+      controller.close();
+    },
+  };
+}
+
+const reasoningDelta = (text: string) => ({ choices: [{ delta: { reasoning_content: text } }] });
+const contentDelta = (text: string) => ({ choices: [{ delta: { content: text } }] });
+const finishChunk = (reason: string) => ({ choices: [{ delta: {}, finish_reason: reason }] });
 
 // ── Tests ──────────────────────────────────────────────────────────
 describe('chatStore', () => {
@@ -162,6 +216,75 @@ describe('chatStore', () => {
     const state = useChatStore.getState();
     expect(state.isStreaming).toBe(false);
     expect(state.streamingContent).toBe('');
+  });
+
+  // ── Issue #15: think-phase indicator + finish_reason ───────────
+  it('stays in the think phase (streaming, no content) while only reasoning deltas arrive', async () => {
+    const manual = createManualSSEStream();
+    fetchSpy.mockResolvedValueOnce(manual.response);
+
+    const send = useChatStore.getState().sendMessage('Hi', 'sk-test', systemPrompt);
+    await vi.waitFor(() => expect(fetchSpy).toHaveBeenCalled());
+
+    manual.push(reasoningDelta('thinking about it'));
+    // Let the reader consume the reasoning delta before asserting.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    // Think phase: still streaming, still nothing to show as content.
+    expect(useChatStore.getState().isStreaming).toBe(true);
+    expect(useChatStore.getState().streamingContent).toBe('');
+
+    manual.push(contentDelta('Answer'));
+    manual.finish('stop');
+    await send;
+
+    const state = useChatStore.getState();
+    expect(state.messages).toHaveLength(2);
+    // Reasoning text was never captured into the stored message.
+    expect(state.messages[1].content).toBe('Answer');
+    expect(state.isStreaming).toBe(false);
+    expect(state.streamingContent).toBe('');
+    expect(state.error).toBeNull();
+  });
+
+  it('shows a truncation notice and stores partial content on finish_reason length', async () => {
+    fetchSpy.mockResolvedValueOnce(
+      createRawSSEResponse([
+        reasoningDelta('thinking'),
+        contentDelta('Partial answer'),
+        finishChunk('length'),
+      ]),
+    );
+    await useChatStore.getState().sendMessage('Hi', 'sk-test', systemPrompt);
+
+    const state = useChatStore.getState();
+    expect(state.messages[1].content).toBe('Partial answer');
+    expect(state.error).toBe(TRUNCATION_NOTICE);
+    expect(state.isStreaming).toBe(false);
+    expect(state.streamingContent).toBe('');
+  });
+
+  it('shows a truncation notice when length-truncated with no content', async () => {
+    fetchSpy.mockResolvedValueOnce(
+      createRawSSEResponse([reasoningDelta('thinking only'), finishChunk('length')]),
+    );
+    await useChatStore.getState().sendMessage('Hi', 'sk-test', systemPrompt);
+
+    const state = useChatStore.getState();
+    expect(state.messages[1].content).toBe('');
+    expect(state.error).toBe(TRUNCATION_NOTICE);
+    expect(state.isStreaming).toBe(false);
+  });
+
+  it('does not surface a notice when the stream finishes normally', async () => {
+    fetchSpy.mockResolvedValueOnce(
+      createRawSSEResponse([contentDelta('Complete answer'), finishChunk('stop')]),
+    );
+    await useChatStore.getState().sendMessage('Hi', 'sk-test', systemPrompt);
+
+    const state = useChatStore.getState();
+    expect(state.messages[1].content).toBe('Complete answer');
+    expect(state.error).toBeNull();
   });
 
   // ── Error path tests ───────────────────────────────────────────
