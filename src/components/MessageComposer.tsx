@@ -64,6 +64,10 @@ export default function MessageComposer() {
       } else if (cmd.type === 'ooc-panel') {
         openOocPanel();
         setInput('');
+      } else if (cmd.type === 'ooc-error') {
+        // Leave the input in place so the user can correct the directive
+        // instead of silently sending it to the model as normal chat.
+        setToast(cmd.message);
       }
       return;
     }
