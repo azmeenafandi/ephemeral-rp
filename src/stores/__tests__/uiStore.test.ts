@@ -8,6 +8,7 @@ describe('uiStore', () => {
       settingsModalOpen: false,
       characterEditorOpen: false,
       editingCharacterId: null,
+      notice: null,
     });
   });
 
@@ -46,5 +47,12 @@ describe('uiStore', () => {
     useUIStore.getState().closeCharacterEditor();
     expect(useUIStore.getState().characterEditorOpen).toBe(false);
     expect(useUIStore.getState().editingCharacterId).toBeNull();
+  });
+
+  it('sets and clears the notice', () => {
+    useUIStore.getState().setNotice('Your /ooc directives were cleared.');
+    expect(useUIStore.getState().notice).toBe('Your /ooc directives were cleared.');
+    useUIStore.getState().clearNotice();
+    expect(useUIStore.getState().notice).toBeNull();
   });
 });

@@ -331,6 +331,13 @@ describe('chatStore', () => {
     expect(useChatStore.getState().oocInstructions).toEqual(['one']);
   });
 
+  it('clearOocInstructions empties the list', () => {
+    useChatStore.setState({ oocInstructions: ['one', 'two'] });
+    const { clearOocInstructions } = useChatStore.getState();
+    clearOocInstructions();
+    expect(useChatStore.getState().oocInstructions).toEqual([]);
+  });
+
   // ── clearChat tests ────────────────────────────────────────────
   it('clearChat resets OOC instructions', () => {
     useChatStore.setState({ oocInstructions: ['test'], messages: [{ id: 'm1', role: 'user', content: 'Hi', timestamp: 1000 }] });
@@ -407,9 +414,19 @@ describe('chatStore', () => {
     useChatStore.getState().startNewChat();
     const state = useChatStore.getState();
     expect(state.messages).toEqual([]);
-    expect(state.oocInstructions).toEqual([]);
+    // Directives are scoped to the character, so a New chat keeps them
+    expect(state.oocInstructions).toEqual(['test']);
     expect(state.error).toBeNull();
     expect(state.chatCharacterId).toBe('char1');
+  });
+
+  it('startNewChat with greeting preserves OOC instructions', () => {
+    useChatStore.setState({ oocInstructions: ['be concise'] });
+    useCharacterStore.setState({ selectedCharacter: { id: 'char1', name: 'Char', description: '', personality: '', scenario: '', systemPrompt: '', greeting: 'Hi' } });
+    useChatStore.getState().startNewChat('Welcome!');
+    const state = useChatStore.getState();
+    expect(state.messages).toHaveLength(1);
+    expect(state.oocInstructions).toEqual(['be concise']);
   });
 
   it('startNewChat with greeting adds assistant message', () => {
