@@ -11,6 +11,7 @@ on:
       - 'LICENSE'
       - 'CLOUDFLARE.md'
       - 'SPEC.md'
+  workflow_dispatch:
 
 jobs:
   deploy:
