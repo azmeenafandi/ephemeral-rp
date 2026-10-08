@@ -34,15 +34,30 @@ export function buildApiPayload(
   return trimmed.map((m) => ({ role: m.role, content: m.content }));
 }
 
+export interface StreamResult {
+  content: string;
+  finishReason: string | null;
+}
+
+/**
+ * Surfaced through the existing composer/ChatArea error banner when the model
+ * stops because it hit its token limit. The partial reply is still stored —
+ * the notice exists so a truncated answer is never silently mistaken for a
+ * complete one.
+ */
+export const TRUNCATION_NOTICE =
+  'The response was cut off because the model reached its length limit. The partial reply was kept.';
+
 export async function streamAssistantResponse(
   response: Response,
   onChunk: (fullContent: string) => void,
-): Promise<string> {
+): Promise<StreamResult> {
   const reader = response.body?.getReader();
   if (!reader) throw new Error('No response body');
 
   const decoder = new TextDecoder();
   let fullContent = '';
+  let finishReason: string | null = null;
   let remainder = '';
 
   while (true) {
@@ -59,7 +74,14 @@ export async function streamAssistantResponse(
         if (data === '[DONE]') continue;
         try {
           const parsed = JSON.parse(data);
-          const delta = parsed.choices?.[0]?.delta?.content;
+          const choice = parsed.choices?.[0];
+          if (choice?.finish_reason) {
+            finishReason = choice.finish_reason;
+          }
+          // Only `delta.content` is read. `reasoning_content` deltas are
+          // deliberately ignored so model "thinking" can never reach stored or
+          // exported session state.
+          const delta = choice?.delta?.content;
           if (delta) {
             fullContent += delta;
             onChunk(fullContent);
@@ -71,7 +93,7 @@ export async function streamAssistantResponse(
     }
   }
 
-  return fullContent;
+  return { content: fullContent, finishReason };
 }
 
 import { AuthError, NetworkError, ValidationError } from '../utils/errors';

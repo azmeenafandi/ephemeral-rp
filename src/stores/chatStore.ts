@@ -4,7 +4,7 @@ import type { SessionExport } from '../types/session';
 import { v4 as uuidv4 } from '../utils/uuid';
 import { API_BASE_URL, APP_VERSION, SESSION_FORMAT_VERSION } from '../config';
 import { useCharacterStore } from './characterStore';
-import { buildApiPayload, streamAssistantResponse, formatErrorMessage, reconstructOocInstructions, detectCharacterFromMessages } from './chatHelpers';
+import { buildApiPayload, streamAssistantResponse, formatErrorMessage, reconstructOocInstructions, detectCharacterFromMessages, TRUNCATION_NOTICE } from './chatHelpers';
 import { isOocMessage } from '../utils/messageHelpers';
 import { AuthError } from '../utils/errors';
 
@@ -127,7 +127,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         throw new Error(message);
       }
 
-      const fullContent = await streamAssistantResponse(response, (fc) =>
+      const { content: fullContent, finishReason } = await streamAssistantResponse(response, (fc) =>
         set({ streamingContent: fc }),
       );
 
@@ -142,6 +142,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
         messages: [...state.messages, assistantMessage],
         isStreaming: false,
         streamingContent: '',
+        // A length-truncated reply still gets stored above; the notice keeps it
+        // from looking like a complete answer.
+        error: finishReason === 'length' ? TRUNCATION_NOTICE : null,
       }));
     } catch (err) {
       set({
